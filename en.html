@@ -771,8 +771,14 @@
         <!-- Inputs Form -->
         <div class="calc-form-grid">
             <div class="form-group">
-                <label class="form-label">Trading Instrument</label>
-                <input type="text" id="symbol-input" class="form-input" value="BTCUSDT" placeholder="BTCUSDT, ETHUSDT...">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <label class="form-label">Trading Instrument</label>
+                    <span style="font-size:0.72rem; color:var(--text-muted); font-family:var(--font-mono);">[Enter ↵]</span>
+                </div>
+                <div style="position:relative; display:flex; align-items:center;">
+                    <input type="text" id="symbol-input" class="form-input" value="BTCUSDT" placeholder="e.g. TONUSDT, DOGE..." style="padding-right:2.4rem;">
+                    <button type="button" onclick="submitSymbolSearch()" title="Query live price and calculate (Enter)" style="position:absolute; right:8px; background:none; border:none; color:var(--accent-cyan); cursor:pointer; font-size:1.05rem; line-height:1; padding:2px;">🔍</button>
+                </div>
                 <div class="quick-coins">
                     <span class="coin-chip active" onclick="setCoin('BTCUSDT')">BTC</span>
                     <span class="coin-chip" onclick="setCoin('ETHUSDT')">ETH</span>
@@ -969,40 +975,111 @@
     async function fetchBybitPrice(symbol) {
         const priceStatus = document.getElementById('price-status');
         if (priceStatus) {
-            priceStatus.innerHTML = '<span style="color:var(--accent-yellow);">⏳ Querying Bybit V5...</span>';
+            priceStatus.innerHTML = '<span style="color:var(--accent-yellow);">⏳ Querying price...</span>';
         }
         try {
             if (livePriceAbortController) {
                 livePriceAbortController.abort();
             }
             livePriceAbortController = new AbortController();
-            const cleanSym = symbol.toUpperCase().trim();
-            const querySym = cleanSym.endsWith('USDT') ? cleanSym : (cleanSym + 'USDT');
-            const url = `https://api.bybit.com/v5/market/tickers?category=linear&symbol=${encodeURIComponent(querySym)}`;
-            const res = await fetch(url, { signal: livePriceAbortController.signal });
-            if (!res.ok) throw new Error('HTTP ' + res.status);
-            const data = await res.json();
-            if (data.retCode === 0 && data.result && data.result.list && data.result.list.length > 0) {
-                const ticker = data.result.list[0];
-                const livePrice = parseFloat(ticker.lastPrice);
-                if (!isNaN(livePrice) && livePrice > 0) {
-                    document.getElementById('price-input').value = livePrice;
-                    if (priceStatus) {
-                        priceStatus.innerHTML = `<span style="color:var(--accent-green);">🟢 Bybit Live: $${formatNum(livePrice)}</span>`;
+            let cleanSym = symbol.toUpperCase().trim();
+            if (!cleanSym.endsWith('USDT') && !cleanSym.endsWith('USDC')) {
+                cleanSym += 'USDT';
+            }
+            document.getElementById('symbol-input').value = cleanSym;
+
+            // Highlight chip if preset
+            document.querySelectorAll('.coin-chip').forEach(el => {
+                el.classList.toggle('active', el.innerText === cleanSym.replace('USDT', ''));
+            });
+
+            // 1. Bybit Linear (Perpetual Futures)
+            try {
+                const urlLinear = `https://api.bybit.com/v5/market/tickers?category=linear&symbol=${encodeURIComponent(cleanSym)}`;
+                const resLinear = await fetch(urlLinear, { signal: livePriceAbortController.signal });
+                if (resLinear.ok) {
+                    const dataLinear = await resLinear.json();
+                    if (dataLinear.retCode === 0 && dataLinear.result && dataLinear.result.list && dataLinear.result.list.length > 0) {
+                        const livePrice = parseFloat(dataLinear.result.list[0].lastPrice);
+                        if (!isNaN(livePrice) && livePrice > 0) {
+                            document.getElementById('price-input').value = livePrice;
+                            if (priceStatus) {
+                                priceStatus.innerHTML = `<span style="color:var(--accent-green);">🟢 Bybit Live: $${formatNum(livePrice)}</span>`;
+                            }
+                            recalc();
+                            return;
+                        }
                     }
-                    recalc();
-                    return;
                 }
+            } catch (errLinear) {
+                if (errLinear.name === 'AbortError') return;
             }
+
+            // 2. Bybit Spot Fallback
+            try {
+                const urlSpot = `https://api.bybit.com/v5/market/tickers?category=spot&symbol=${encodeURIComponent(cleanSym)}`;
+                const resSpot = await fetch(urlSpot, { signal: livePriceAbortController.signal });
+                if (resSpot.ok) {
+                    const dataSpot = await resSpot.json();
+                    if (dataSpot.retCode === 0 && dataSpot.result && dataSpot.result.list && dataSpot.result.list.length > 0) {
+                        const livePrice = parseFloat(dataSpot.result.list[0].lastPrice);
+                        if (!isNaN(livePrice) && livePrice > 0) {
+                            document.getElementById('price-input').value = livePrice;
+                            if (priceStatus) {
+                                priceStatus.innerHTML = `<span style="color:var(--accent-green);">🟢 Bybit Spot: $${formatNum(livePrice)}</span>`;
+                            }
+                            recalc();
+                            return;
+                        }
+                    }
+                }
+            } catch (errSpot) {
+                if (errSpot.name === 'AbortError') return;
+            }
+
+            // 3. Cross-Exchange Live Fallback (Binance - e.g. TONUSDT)
+            try {
+                const urlBinance = `https://api.binance.com/api/v3/ticker/price?symbol=${encodeURIComponent(cleanSym)}`;
+                const resBinance = await fetch(urlBinance, { signal: livePriceAbortController.signal });
+                if (resBinance.ok) {
+                    const dataBinance = await resBinance.json();
+                    if (dataBinance && dataBinance.price) {
+                        const livePrice = parseFloat(dataBinance.price);
+                        if (!isNaN(livePrice) && livePrice > 0) {
+                            document.getElementById('price-input').value = livePrice;
+                            if (priceStatus) {
+                                priceStatus.innerHTML = `<span style="color:var(--accent-green);">🟢 Live Market: $${formatNum(livePrice)}</span>`;
+                            }
+                            recalc();
+                            return;
+                        }
+                    }
+                }
+            } catch (errBinance) {
+                if (errBinance.name === 'AbortError') return;
+            }
+
             if (priceStatus) {
-                priceStatus.innerHTML = `<span style="color:var(--text-muted);">Manual Price Input</span>`;
+                priceStatus.innerHTML = `<span style="color:var(--text-muted);">Manual Mode</span>`;
             }
+            recalc();
         } catch (e) {
             if (e.name !== 'AbortError') {
                 if (priceStatus) {
-                    priceStatus.innerHTML = `<span style="color:var(--text-muted);">Manual Price Input</span>`;
+                    priceStatus.innerHTML = `<span style="color:var(--text-muted);">Manual Mode</span>`;
                 }
+                recalc();
             }
+        }
+    }
+
+    function submitSymbolSearch() {
+        clearTimeout(symbolDebounceTimer);
+        const inputEl = document.getElementById('symbol-input');
+        if (!inputEl) return;
+        const val = inputEl.value.trim().toUpperCase();
+        if (val) {
+            fetchBybitPrice(val);
         }
     }
 
@@ -1139,6 +1216,12 @@
 
     const priceInputEl = document.getElementById('price-input');
     if (priceInputEl) {
+        priceInputEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                recalc();
+            }
+        });
         priceInputEl.addEventListener('input', () => {
             const priceStatus = document.getElementById('price-status');
             if (priceStatus) {
@@ -1150,6 +1233,12 @@
 
     const symbolInputEl = document.getElementById('symbol-input');
     if (symbolInputEl) {
+        symbolInputEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                submitSymbolSearch();
+            }
+        });
         symbolInputEl.addEventListener('input', () => {
             clearTimeout(symbolDebounceTimer);
             const val = symbolInputEl.value.trim().toUpperCase();
@@ -1158,10 +1247,9 @@
             });
             symbolDebounceTimer = setTimeout(() => {
                 if (val.length >= 2) {
-                    fetchBybitPrice(val);
+                    submitSymbolSearch();
                 }
-            }, 600);
-            recalc();
+            }, 800);
         });
     }
 
