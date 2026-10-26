@@ -1271,9 +1271,9 @@
 
         switch(utcDay) {
             case 1: // Monday
-                dayScore = 22;
+                dayScore = 12;
                 dayTitle = `Monday (${dayScore}/30)`;
-                dayDesc = "Monday: formation of weekly institutional range (Monday High/Low). Limit grids absorb opening volatility cascades and prepare positioning for Tuesday.";
+                dayDesc = "Monday: formation of weekly institutional range (Monday High/Low). Elevated risk of stop cascades. Deep limit ladder execution recommended.";
                 dayReason = "<b>Monday Session:</b> Weekly range formation (Monday Range). Safe limit grids absorb opening volatility.";
                 break;
             case 2: // Tuesday
@@ -1366,9 +1366,9 @@
             sessionTitle = `European Session (London) (${sessionScore}/20)`;
             sessionDesc = "London bank opening. Inflow of European liquidity, Judas Swing hunting Asian extremes.";
             sessionReason = `⚡ <b>London Session (${pad(utcHours)}:${pad(utcMins)} UTC):</b> European interbank liquidity inflow.`;
-        } else if (timeMin >= 20 * 60 && timeMin <= 23 * 60 + 59) { // 20:00 - 23:59 UTC
-            sessionScore = 15;
-            sessionTitle = `US Evening Close / Handover (${sessionScore}/20)`;
+        } else if (timeMin >= 17 * 60 + 30 && timeMin <= 23 * 60 + 59) { // 17:30 - 23:59 UTC
+            sessionScore = 14;
+            sessionTitle = `US Evening Close (${sessionScore}/20)`;
             sessionDesc = "US market completion (18:00-21:00 UTC). Reduction in churn, preparation for 8-hour funding reset (00:00 UTC).";
             sessionReason = `⏱️ <b>Session Timing (${pad(utcHours)}:${pad(utcMins)} UTC):</b> US evening close, preparation for 8h funding reset at 00:00 UTC.`;
         } else { // 00:00 - 08:00 UTC
@@ -1395,6 +1395,7 @@
         const sessionScoreEl = document.getElementById('factor-session-score');
         const sessionDescEl = document.getElementById('factor-session-desc');
         const whyListEl = document.getElementById('timing-why-list');
+        const recBannerEl = document.getElementById('timing-rec-banner');
 
         if (scoreEl) scoreEl.innerText = `${totalScore}/100`;
 
@@ -1403,14 +1404,17 @@
                 badgeEl.innerText = `🟢 GOLDEN ENTRY WINDOW (${totalScore}/100)`;
                 headlineEl.innerText = "Optimal Timing: High Institutional Liquidity Window";
                 leadEl.innerText = "👉 EXCELLENT ENTRY CONDITIONS. Deployment of 3-order Wyckoff limit ladders recommended.";
-            } else if (totalScore >= 60) {
-                badgeEl.innerText = `🟡 FAVORABLE TIMING (${totalScore}/100)`;
-                headlineEl.innerText = "Moderate Institutional Liquidity Window";
-                leadEl.innerText = "👉 MODERATE REGIME. Safe deployment of limit orders with standard risk buffers.";
+                if (recBannerEl) recBannerEl.innerHTML = "🎯 <b>Recommended Algorithm Action:</b> Safe placement of limit orders along computed Wyckoff prime entry zones.";
+            } else if (totalScore >= 50) {
+                badgeEl.innerText = `🟡 MODERATE ENTRY WINDOW (${totalScore}/100)`;
+                headlineEl.innerText = "Moderate Risk: Elevated Caution Required";
+                leadEl.innerText = "👉 ENTRY RECOMMENDED VIA DEEP LIMIT LADDERS ONLY. Market buys discouraged.";
+                if (recBannerEl) recBannerEl.innerHTML = "🎯 <b>Recommended Algorithm Action:</b> Deploy deep limit ladders only (Orders 2 & 3) with max 2x-3x Isolated leverage.";
             } else {
                 badgeEl.innerText = `🔴 ELEVATED RISK (${totalScore}/100)`;
                 headlineEl.innerText = "Thin Market or Transition Phase";
                 leadEl.innerText = "👉 ELEVATED VOLATILITY. Strict placement of deep limit buffers to prevent cascade fills.";
+                if (recBannerEl) recBannerEl.innerHTML = "🎯 <b>Recommended Algorithm Action:</b> Defer new market entries until Tuesday or use ultra-deep limit buffers.";
             }
         }
 

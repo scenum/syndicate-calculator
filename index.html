@@ -1248,9 +1248,9 @@
 
         switch(utcDay) {
             case 1: // Monday
-                dayScore = 22;
+                dayScore = 12;
                 dayTitle = `Понедельник (${dayScore}/30)`;
-                dayDesc = "Понедельник: формирование институционального диапазона недели (Monday Range High/Low). Лимитные сетки защищают от утренних ложных выносов и готовят позицию к импульсам вторника.";
+                dayDesc = "Понедельник: формирование диапазона недели (Monday Range). Высокий риск ложных выносов и сбора стопов выходных дней. Рекомендуется работа только глубокими лимитками.";
                 dayReason = "<b>Понедельник:</b> формирование диапазона недели (Monday Range). Лимитные сетки защищают от манипуляций открытия.";
                 break;
             case 2: // Tuesday
@@ -1343,10 +1343,10 @@
             sessionTitle = `Европейская сессия (Лондон) (${sessionScore}/20)`;
             sessionDesc = "Открытие европейских банков и бирж. Заход институционального капитала, снятие азиатских экстремумов (Judas Swing).";
             sessionReason = `⚡ <b>Лондонская сессия (${pad(utcHours)}:${pad(utcMins)} UTC):</b> приток европейской ликвидности.`;
-        } else if (timeMin >= 20 * 60 && timeMin <= 23 * 60 + 59) { // 20:00 - 23:59 UTC
-            sessionScore = 15;
-            sessionTitle = `Вечернее закрытие США / Handover (${sessionScore}/20)`;
-            sessionDesc = "Завершение американских торгов (18:00-21:00 UTC). Снижение волатильности, подготовка к 8-часовому сбросу фандинга (00:00 UTC).";
+        } else if (timeMin >= 17 * 60 + 30 && timeMin <= 23 * 60 + 59) { // 17:30 - 23:59 UTC
+            sessionScore = 14;
+            sessionTitle = `Вечернее закрытие США (${sessionScore}/20)`;
+            sessionDesc = "Завершение американских торгов (18:00-21:00 UTC). Снижение внутридневной волатильности, подготовка к 8-часовому сбросу фандинга (00:00 UTC).";
             sessionReason = `⏱️ <b>Текущее время (${pad(utcHours)}:${pad(utcMins)} UTC):</b> вечернее закрытие США, сброс фандинга в 00:00 UTC.`;
         } else { // 00:00 - 08:00 UTC
             sessionScore = 15;
@@ -1372,6 +1372,7 @@
         const sessionScoreEl = document.getElementById('factor-session-score');
         const sessionDescEl = document.getElementById('factor-session-desc');
         const whyListEl = document.getElementById('timing-why-list');
+        const recBannerEl = document.getElementById('timing-rec-banner');
 
         if (scoreEl) scoreEl.innerText = `${totalScore}/100`;
 
@@ -1380,14 +1381,17 @@
                 badgeEl.innerText = `🟢 ЗОЛОТОЕ ОКНО ДЛЯ ВХОДА (${totalScore}/100)`;
                 headlineEl.innerText = "Идеальное время: Высокая институциональная ликвидность";
                 leadEl.innerText = "👉 ОТЛИЧНЫЙ МОМЕНТ ДЛЯ ВХОДА. Рекомендуется выставление 3-ордерных сеток по стратегии Вайкоффа.";
-            } else if (totalScore >= 60) {
-                badgeEl.innerText = `🟡 БЛАГОПРИЯТНЫЙ ТАЙМИНГ (${totalScore}/100)`;
-                headlineEl.innerText = "Умеренная институциональная ликвидность";
-                leadEl.innerText = "👉 УМЕРЕННЫЙ РЕЖИМ. Безопасная расстановка лимитных сеток с повышенным запасом хода.";
+                if (recBannerEl) recBannerEl.innerHTML = "🎯 <b>Рекомендованное действие алгоритма:</b> Безопасное размещение лимитных ордеров по рассчитанным зонам входа Prime-кандидатов.";
+            } else if (totalScore >= 50) {
+                badgeEl.innerText = `🟡 УМЕРЕННОЕ ОКНО (${totalScore}/100)`;
+                headlineEl.innerText = "Умеренный риск: Требуется повышенная осторожность";
+                leadEl.innerText = "👉 ВХОД ВОЗМОЖЕН ТОЛЬКО ГЛУБОКИМИ ЛИМИТКАМИ. Рыночные покупки не рекомендованы.";
+                if (recBannerEl) recBannerEl.innerHTML = "🎯 <b>Рекомендованное действие алгоритма:</b> Использовать только глубокие лимитки (Ордера 2 и 3) с плечом не выше 2x-3x Isolated.";
             } else {
                 badgeEl.innerText = `🔴 ПОВЫШЕННЫЙ РИСК (${totalScore}/100)`;
                 headlineEl.innerText = "Тонкий рынок или переходная фаза";
                 leadEl.innerText = "👉 ПОВЫШЕННАЯ ВОЛАТИЛЬНОСТЬ. Входы строго глубокими лимитками с защитой от сквизов.";
+                if (recBannerEl) recBannerEl.innerHTML = "🎯 <b>Рекомендованное действие алгоритма:</b> Воздержитесь от покупок по текущей цене. Ждите вторника или выставляйте ультра-глубокие сетки.";
             }
         }
 
