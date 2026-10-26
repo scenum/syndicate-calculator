@@ -1,0 +1,2591 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Syndicate Security & Trading Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0e14;
+            --card-bg: rgba(22, 28, 42, 0.85);
+            --border: rgba(255, 255, 255, 0.08);
+            --accent-green: #00e676;
+            --accent-blue: #2979ff;
+            --accent-red: #ff1744;
+            --accent-purple: #d500f9;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            margin: 0;
+            padding: 2rem;
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(41, 121, 255, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(213, 0, 249, 0.12) 0%, transparent 40%);
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2rem;
+            background: linear-gradient(135deg, #00e676, #2979ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-active { background: rgba(0, 230, 118, 0.15); color: var(--accent-green); border: 1px solid var(--accent-green); }
+        .badge-idle { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); border: 1px solid var(--border); }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.25rem;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(41, 121, 255, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(41, 121, 255, 0.5);
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            border-radius: 8px;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff1744, #ff5252);
+            box-shadow: 0 4px 15px rgba(255, 23, 68, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #00e676, #00b0ff);
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+        }
+
+        input[type="text"], input[type="number"], select, textarea {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-family: inherit;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 1rem;
+        }
+
+        pre {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            color: #a7f3d0;
+            font-size: 0.85rem;
+            max-height: 250px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th { color: var(--text-muted); font-size: 0.85rem; }
+
+        /* Modal styling */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--accent-blue);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 550px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🛡️ MARKET SYNDICATE TRADING HUB</h1>
+            <small style="color: var(--text-muted);">Фоновый Демон | 60s Real-time Монитор | Интерактивный Калькулятор Ордеров</small>
+        </div>
+        <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+            <span class="badge badge-active">
+                Демон: АКТИВЕН
+            </span>
+        </div>
+    </div>
+
+    <!-- REAL-TIME MARKET TIMING & EXECUTION WINDOW (v13.5) -->
+    <div class="card" style="margin-bottom: 2rem; border-left: 6px solid #00e676; background: linear-gradient(135deg, rgba(0, 230, 118, 0.15) 0%, rgba(11, 14, 20, 0.95) 100%); box-shadow: 0 4px 25px rgba(0,0,0,0.4);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+            <div>
+                <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+                    <span class="badge" style="background: #00e676; color: #0b0e14; font-weight: 800; font-size: 0.95rem; padding: 0.45rem 0.9rem; letter-spacing: 0.5px;">
+                        🟢 ЗОЛОТОЕ ОКНО ДЛЯ ВХОДА (78/100)
+                    </span>
+                    <h2 style="margin:0; font-size:1.3rem; color: #fff;">Идеальное время: Высокая институциональная ликвидность</h2>
+                </div>
+                <div style="margin: 0.6rem 0 0 0; font-size: 1.05rem; color: #f8fafc; font-weight: 600;">
+                    👉 ОТЛИЧНЫЙ МОМЕНТ ДЛЯ ВХОДА. Рекомендуется выставление 3-ордерных сеток по стратегии Вайкоффа.
+                </div>
+            </div>
+            <div style="text-align:right;">
+                <div style="font-size:0.85rem; color: var(--text-muted);">Текущее время: <b style="color:#e2e8f0;">2026-10-25 21:57:41 МСК</b></div>
+                <div style="font-size:0.9rem; color: var(--text-muted); margin-top:0.3rem;">
+                    Индекс благоприятности: <b style="color: #00e676; font-size: 1.25rem;">78/100</b>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4 Квантовых Фактора -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.85rem; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08);">
+            <div style="background: rgba(0,0,0,0.3); padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">📅 День недели</div>
+                <div style="font-weight: 700; color: #fff; margin-top: 0.2rem; font-size: 0.95rem;">
+                    Воскресенье <span style="color: #00e676;">(18/30)</span>
+                </div>
+                <small style="color: #94a3b8; display: block; margin-top: 0.3rem; line-height: 1.35;">Вечер воскресенья (18:00-23:59 МСК): подготовка к открытию институциональной недели (Monday Open). Топовые монеты с аккумуляцией китов готовы к раннему импульсу.</small>
+            </div>
+            <div style="background: rgba(0,0,0,0.3); padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">🗓️ Календарь месяца</div>
+                <div style="font-weight: 700; color: #fff; margin-top: 0.2rem; font-size: 0.95rem;">
+                    25-е число месяца (Экспирация опционов Deribit) <span style="color: #00e676;">(26/30)</span>
+                </div>
+                <small style="color: #94a3b8; display: block; margin-top: 0.3rem; line-height: 1.35;">Окно закрытия месячных опционов (последняя пятница месяца). Маркетмейкеры держат цену около Max Pain, после чего начинается ралли.</small>
+            </div>
+            <div style="background: rgba(0,0,0,0.3); padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">⏰ Торговая сессия</div>
+                <div style="font-weight: 700; color: #fff; margin-top: 0.2rem; font-size: 0.95rem;">
+                    Вечернее закрытие США <span style="color: #00e676;">(14/20)</span>
+                </div>
+                <small style="color: #94a3b8; display: block; margin-top: 0.3rem; line-height: 1.35;">Завершение американских торгов. Снижение внутридневной волатильности, подготовка к 8-часовому сбросу фандинга.</small>
+            </div>
+            <div style="background: rgba(0,0,0,0.3); padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">🛡️ Макро-события & Риск</div>
+                <div style="font-weight: 700; color: #00e676; margin-top: 0.2rem; font-size: 0.95rem;">
+                    ✅ ШТАТНЫЙ РЕЖИМ
+                </div>
+                <small style="color: #94a3b8; display: block; margin-top: 0.3rem; line-height: 1.35;">Макро-фон чист; действуют стандартные уровни.</small>
+            </div>
+        </div>
+
+        <!-- Подробное обоснование ПОЧЕМУ -->
+        <div style="margin-top: 1rem; padding: 0.9rem 1.1rem; background: rgba(0,0,0,0.4); border-radius: 8px; border: 1px solid rgba(255,255,255,0.07);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <b style="color: #00e5ff; font-size: 0.92rem; text-transform: uppercase; letter-spacing: 0.5px;">💡 ПОЧЕМУ СЕЙЧАС ТАКОЙ СТАТУС ДЛЯ ВХОДА:</b>
+            </div>
+            <ul style="margin: 0.5rem 0 0 1.25rem; padding: 0; color: #cbd5e1; font-size: 0.9rem; line-height: 1.55;">
+                
+                    <li>✅ Плановые макрошоки ФРС отсутствуют; рыночная структура стабильна.</li>
+                
+                    <li>🛑 Выходной день (Воскресенье): институциональные биржи закрыты, объемы снижены. На выходных маркетмейкеры часто устраивают сборы стопов розничных трейдеров.</li>
+                
+                    <li>⏱️ Текущее время (21:57 МСК): внутридневная сессия не имеет институционального веса из-за выходных.</li>
+                
+            </ul>
+            <div style="margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px dashed rgba(255,255,255,0.1); color: #ffd600; font-weight: 600; font-size: 0.92rem;">
+                🎯 Рекомендованное действие алгоритма: <span style="color: #fff; font-weight: 500;">Безопасное размещение лимитных ордеров по рассчитанным зонам входа Prime-кандидатов.</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleCard('control-panel')">
+            <h2 style="margin:0;">⚡ Панель Управления Сервером</h2>
+            <button class="btn btn-sm" id="btn-control-panel" style="font-size:0.8rem; padding:0.25rem 0.6rem; background:rgba(255,255,255,0.08); border:1px solid var(--border);">👁️ Скрыть</button>
+        </div>
+        <div id="body-control-panel" style="margin-top:1rem;">
+            <label style="color: var(--text-muted); font-size: 0.85rem;">X-Syndicate-Token:</label>
+            <input type="text" id="api-token" value="SYNDICATE_SECURE_TOKEN_998877">
+            
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <button class="btn" style="background: linear-gradient(135deg, #00b0ff, #00e5ff);" onclick="triggerScan(false)">🔄 Обновить Цены на Сайте (Без TG)</button>
+                <button class="btn" style="background: linear-gradient(135deg, #00e676, #00b0ff); box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4);" onclick="triggerScan(true)">🚀 Сканировать Рынок ➔ В Telegram</button>
+                <button class="btn" style="background: linear-gradient(135deg, #7c4dff, #651fff);" onclick="triggerBybitSync()">⚡ Сверить с Bybit V5</button>
+                <button class="btn btn-success" onclick="toggleDaemon('start')">▶ Запустить Демон</button>
+                <button class="btn btn-danger" onclick="toggleDaemon('stop')">⏹ Остановить Демон</button>
+            </div>
+            <div id="action-status" style="margin-top: 1rem; font-weight: 600;"></div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleCard('prime-candidates')">
+            <h2 style="margin:0;">🏆 PRIME CANDIDATES (Найденные монеты готовые к входу)</h2>
+            <button class="btn btn-sm" id="btn-prime-candidates" style="font-size:0.8rem; padding:0.25rem 0.6rem; background:rgba(255,255,255,0.08); border:1px solid var(--border);">👁️ Скрыть</button>
+        </div>
+        <div id="body-prime-candidates">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Символ</th>
+                        <th>Скор</th>
+                        <th>Цена</th>
+                        <th>Действия Китов</th>
+                        <th>Новостной Триггер</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                        
+                        <tr>
+                            <td>
+                                <b>TAOUSDT</b>
+                                
+                                    <br><span class="badge" style="font-size:0.7rem; padding:0.15rem 0.45rem; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#00e676;">
+                                        🟢 Золотое окно (84/100)
+                                    </span>
+                                
+                            </td>
+                            <td>
+                                <b style="color: var(--accent-green);">91 / 100</b>
+                                
+                                    <br><small style="color:#00e676; font-size:0.72rem;">(Тайминг: +5)</small>
+                                
+                            </td>
+                            <td>$251.27</td>
+                            <td>WHALE_ACCUMULATION_BUYING</td>
+                            <td>
+                                Расширение фондов Grayscale Decentralized AI и интеграция EVM в субсети Bittensor
+                                
+                                    <br><small style="color: #94a3b8; font-size: 0.72rem;">🎯 Безопасное размещение лимитных ордеров по рассчитанным зонам входа Prime-кандидатов.</small>
+                                
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-success" onclick="openOrderModal('TAOUSDT', 251.27, '3x Isolated')">
+                                    📐 Сформировать Ордер
+                                </button>
+                            </td>
+                        </tr>
+                        
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleCard('pretenders')">
+            <h2 style="margin:0;">⏳ PRETENDERS (На карандаше – макс 45 дней)</h2>
+            <button class="btn btn-sm" id="btn-pretenders" style="font-size:0.8rem; padding:0.25rem 0.6rem; background:rgba(255,255,255,0.08); border:1px solid var(--border);">👁️ Скрыть</button>
+        </div>
+        <div id="body-pretenders">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Символ</th>
+                        <th>Скор</th>
+                        <th>Цена</th>
+                        <th>Действия Китов</th>
+                        <th>Новостной Триггер / Ожидается</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                        
+                        <tr>
+                            <td>
+                                <b>FETUSDT</b>
+                                
+                                    <br><span class="badge" style="font-size:0.7rem; padding:0.15rem 0.45rem; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#00e676;">
+                                        🟢 Золотое окно (78/100)
+                                    </span>
+                                
+                            </td>
+                            <td>
+                                <b style="color: var(--accent-blue);">75 / 100</b>
+                                
+                                    <br><small style="color:#00e676; font-size:0.72rem;">(Тайминг: +5)</small>
+                                
+                            </td>
+                            <td>$0.1760</td>
+                            <td>🚨 ПРЕДУПРЕЖДЕНИЕ БИРЖИ (Аномальная активность)</td>
+                            <td>
+                                ДИСКВАЛИФИЦИРОВАНА (Предупреждение Bybit о риске ликвидности &amp; Взлом моста SingularityNET $1.56M). На карандаше.
+                                
+                                    <br><small style="color: #94a3b8; font-size: 0.72rem;">🎯 Безопасное размещение лимитных ордеров по рассчитанным зонам входа Prime-кандидатов.</small>
+                                
+                            </td>
+                            <td>
+                                <button class="btn btn-sm" onclick="openOrderModal('FETUSDT', 0.176, '[DISQUALIFIED] 0x No Trading')">
+                                    📐 Сформировать Ордер
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <b>ARBUSDT</b>
+                                
+                                    <br><span class="badge" style="font-size:0.7rem; padding:0.15rem 0.45rem; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#00e676;">
+                                        🟢 Золотое окно (78/100)
+                                    </span>
+                                
+                            </td>
+                            <td>
+                                <b style="color: var(--accent-blue);">86 / 100</b>
+                                
+                                    <br><small style="color:#00e676; font-size:0.72rem;">(Тайминг: +5)</small>
+                                
+                            </td>
+                            <td>$0.1695</td>
+                            <td>WHALE_ACCUMULATION_BUYING</td>
+                            <td>
+                                Масштабирование экосистемы Arbitrum Orbit и рост объемов в L2 DeFi ($47.5M 24h оборот)
+                                
+                                    <br><small style="color: #94a3b8; font-size: 0.72rem;">🎯 Безопасное размещение лимитных ордеров по рассчитанным зонам входа Prime-кандидатов.</small>
+                                
+                            </td>
+                            <td>
+                                <button class="btn btn-sm" onclick="openOrderModal('ARBUSDT', 0.16954, '3x Isolated')">
+                                    📐 Сформировать Ордер
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <b>SEIUSDT</b>
+                                
+                                    <br><span class="badge" style="font-size:0.7rem; padding:0.15rem 0.45rem; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#00e676;">
+                                        🟢 Золотое окно (78/100)
+                                    </span>
+                                
+                            </td>
+                            <td>
+                                <b style="color: var(--accent-blue);">87 / 100</b>
+                                
+                                    <br><small style="color:#00e676; font-size:0.72rem;">(Тайминг: +5)</small>
+                                
+                            </td>
+                            <td>$0.0529</td>
+                            <td>WHALE_ACCUMULATION_BUYING</td>
+                            <td>
+                                Запуск параллельного EVM и рекордный рост DEX объемов на Sei v2
+                                
+                                    <br><small style="color: #94a3b8; font-size: 0.72rem;">🎯 Безопасное размещение лимитных ордеров по рассчитанным зонам входа Prime-кандидатов.</small>
+                                
+                            </td>
+                            <td>
+                                <button class="btn btn-sm" onclick="openOrderModal('SEIUSDT', 0.05292, '3x Isolated')">
+                                    📐 Сформировать Ордер
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <b>OPUSDT</b>
+                                
+                                    <br><span class="badge" style="font-size:0.7rem; padding:0.15rem 0.45rem; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#00e676;">
+                                        🟢 Золотое окно (78/100)
+                                    </span>
+                                
+                            </td>
+                            <td>
+                                <b style="color: var(--accent-blue);">88 / 100</b>
+                                
+                                    <br><small style="color:#00e676; font-size:0.72rem;">(Тайминг: +5)</small>
+                                
+                            </td>
+                            <td>$0.1118</td>
+                            <td>WHALE_ACCUMULATION_BUYING</td>
+                            <td>
+                                Расширение объединенной сети Superchain и рост комиссионных доходов от Base
+                                
+                                    <br><small style="color: #94a3b8; font-size: 0.72rem;">🎯 Безопасное размещение лимитных ордеров по рассчитанным зонам входа Prime-кандидатов.</small>
+                                
+                            </td>
+                            <td>
+                                <button class="btn btn-sm" onclick="openOrderModal('OPUSDT', 0.11179, '3x Isolated')">
+                                    📐 Сформировать Ордер
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <b>RENDERUSDT</b>
+                                
+                                    <br><span class="badge" style="font-size:0.7rem; padding:0.15rem 0.45rem; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#00e676;">
+                                        🟢 Золотое окно (78/100)
+                                    </span>
+                                
+                            </td>
+                            <td>
+                                <b style="color: var(--accent-blue);">91 / 100</b>
+                                
+                                    <br><small style="color:#00e676; font-size:0.72rem;">(Тайминг: +5)</small>
+                                
+                            </td>
+                            <td>$1.72</td>
+                            <td>WHALE_ACCUMULATION_BUYING</td>
+                            <td>
+                                Масштабирование распределенных вычислений GPU для обучения нейросетей
+                                
+                                    <br><small style="color: #94a3b8; font-size: 0.72rem;">🎯 Безопасное размещение лимитных ордеров по рассчитанным зонам входа Prime-кандидатов.</small>
+                                
+                            </td>
+                            <td>
+                                <button class="btn btn-sm" onclick="openOrderModal('RENDERUSDT', 1.718, '3x Isolated')">
+                                    📐 Сформировать Ордер
+                                </button>
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                <b>TAOUSDT</b>
+                                
+                                    <br><span class="badge" style="font-size:0.7rem; padding:0.15rem 0.45rem; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#00e676;">
+                                        🟢 Золотое окно (78/100)
+                                    </span>
+                                
+                            </td>
+                            <td>
+                                <b style="color: var(--accent-blue);">91 / 100</b>
+                                
+                                    <br><small style="color:#00e676; font-size:0.72rem;">(Тайминг: +5)</small>
+                                
+                            </td>
+                            <td>$254.37</td>
+                            <td>WHALE_ACCUMULATION_BUYING</td>
+                            <td>
+                                Расширение фондов Grayscale Decentralized AI и интеграция EVM в субсети Bittensor
+                                
+                                    <br><small style="color: #94a3b8; font-size: 0.72rem;">🎯 Безопасное размещение лимитных ордеров по рассчитанным зонам входа Prime-кандидатов.</small>
+                                
+                            </td>
+                            <td>
+                                <button class="btn btn-sm" onclick="openOrderModal('TAOUSDT', 254.37, '3x Isolated')">
+                                    📐 Сформировать Ордер
+                                </button>
+                            </td>
+                        </tr>
+                        
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleCard('active-orders')">
+            <h2 style="margin:0;">📌 Активные Ордера и Позиции в Мониторинге</h2>
+            <button class="btn btn-sm" id="btn-active-orders" style="font-size:0.8rem; padding:0.25rem 0.6rem; background:rgba(255,255,255,0.08); border:1px solid var(--border);">👁️ Скрыть</button>
+        </div>
+        <div id="body-active-orders">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Символ & Статус</th>
+                        <th>Цены Входа (Ордер №1 / №2 / №3)</th>
+                        <th>Текущая Цена</th>
+                        <th>24h Экстремумы (High / Low)</th>
+                        <th>Дистанция до Входа</th>
+                        <th>PnL (% / $)</th>
+                        <th>Защита (SL / Liq)</th>
+                        <th>Цели</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-tbody">
+                    
+                    <tr>
+                        <td>
+                            <b>ENAUSDT</b><br>
+                            <span class="badge badge-active" style="font-size:0.75rem;">
+                                Все части в позиции 🟢
+                            </span>
+                        </td>
+                        <td>
+                            
+                                <b style="color: var(--accent-green);">Ср. Вход: $0.1978</b><br>
+                                
+                                    <small style="color: var(--accent-green); font-weight:600;">🟢 О1: $0.2099 (В позиции)</small><br>
+                                    
+                                        
+                                            <small style="color: var(--accent-green); font-weight:600;">🟢 О2: $0.1984 (В позиции)</small><br>
+                                        
+                                    
+                                    
+                                        
+                                            <small style="color: var(--accent-green); font-weight:600;">🟢 О3: $0.1865 (В позиции)</small>
+                                        
+                                    
+                                
+                            
+                        </td>
+                        <td><b>$0.2066</b></td>
+                        <td>
+                            <span style="color: var(--accent-green); font-weight:600;">H: $0.2089</span><br>
+                            <span style="color: var(--accent-purple); font-weight:600;">L: $0.1877</span>
+                        </td>
+                        <td>
+                            
+                                <span style="color: var(--accent-green);">В позиции</span>
+                            
+                        </td>
+                        <td style="color: var(--accent-green)">
+                            
+                                
+                                
+                                <b>4.43%</b> ($39.86 USDT)
+                            
+                        </td>
+                        <td>
+                            🛡️ SL: <b>$0.1697</b><br>
+                            🔒 Liq: <small style="color: #e2e8f0;">$0.1331</small>
+                        </td>
+                        <td>
+                            
+                                🎯 TP1: <b>$0.2519</b> | TP2: <b>$0.2519</b> | TP3: <b>$0.2939</b><br>
+                                ⚖️ БУ (+10%): <small style="color: var(--text-muted);">$0.2176</small>
+                            
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            <b>AAVEUSDT</b><br>
+                            <span class="badge badge-active" style="font-size:0.75rem;">
+                                Ордер 1 в позиции (1/3) 🟢 | О2/О3 в стакане
+                            </span>
+                        </td>
+                        <td>
+                            
+                                <b style="color: var(--accent-green);">Ср. Вход: $141.50</b><br>
+                                
+                                    <small style="color: var(--accent-green); font-weight:600;">🟢 О1: $141.50 (В позиции)</small><br>
+                                    
+                                        
+                                            <small style="color: var(--text-muted); font-weight:600;">⏳ О2: $126.80 (В стакане)</small><br>
+                                        
+                                    
+                                    
+                                        
+                                            <small style="color: #38bdf8; font-weight:600;">⏳ О3: $124.50 (В стакане)</small>
+                                        
+                                    
+                                
+                            
+                        </td>
+                        <td><b>$137.51</b></td>
+                        <td>
+                            <span style="color: var(--accent-green); font-weight:600;">H: $138.86</span><br>
+                            <span style="color: var(--accent-purple); font-weight:600;">L: $134.76</span>
+                        </td>
+                        <td>
+                            
+                                <span style="color: var(--accent-green);">В позиции</span>
+                            
+                        </td>
+                        <td style="color: var(--accent-red)">
+                            
+                                
+                                
+                                <b>-2.82%</b> (-$11.97 USDT)
+                            
+                        </td>
+                        <td>
+                            🛡️ SL: <b>$118.50</b><br>
+                            🔒 Liq: <small style="color: #e2e8f0;">$95.05</small>
+                        </td>
+                        <td>
+                            
+                                🎯 TP1: <b>$195.00</b> | TP2: <b>$171.30</b> | TP3: <b>$171.30</b><br>
+                                ⚖️ БУ (+10%): <small style="color: var(--text-muted);">$155.65</small>
+                            
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            <b>INJUSDT</b><br>
+                            <span class="badge badge-active" style="font-size:0.75rem;">
+                                Ордер 1 в позиции (1/2) 🟢
+                            </span>
+                        </td>
+                        <td>
+                            
+                                <b style="color: var(--accent-green);">Ср. Вход: $7.88</b><br>
+                                
+                                    <small style="color: var(--accent-green); font-weight:600;">🟢 О1: $7.88 (В позиции)</small><br>
+                                    
+                                        
+                                            <small style="color: var(--text-muted); font-weight:600;">⏳ О2: $7.11 (В стакане)</small><br>
+                                        
+                                    
+                                    
+                                
+                            
+                        </td>
+                        <td><b>$8.10</b></td>
+                        <td>
+                            <span style="color: var(--accent-green); font-weight:600;">H: $8.15</span><br>
+                            <span style="color: var(--accent-purple); font-weight:600;">L: $7.51</span>
+                        </td>
+                        <td>
+                            
+                                <span style="color: var(--accent-green);">В позиции</span>
+                            
+                        </td>
+                        <td style="color: var(--accent-green)">
+                            
+                                
+                                
+                                <b>2.75%</b> ($8.27 USDT)
+                            
+                        </td>
+                        <td>
+                            🛡️ SL: <b>$6.35</b><br>
+                            🔒 Liq: <small style="color: #e2e8f0;">$5.30</small>
+                        </td>
+                        <td>
+                            
+                                🎯 TP1: <b>$9.31</b> | TP2: <b>$7.66</b><br>
+                                ⚖️ БУ (+10%): <small style="color: var(--text-muted);">$8.67</small>
+                            
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleCard('closed-trades')">
+            <h2 style="margin:0;">🏆 ИСТОРИЯ ЗАКРЫТЫХ СДЕЛОК И РЕАЛИЗОВАННАЯ ПРИБЫЛЬ (Closed PnL Ledger v12.4)</h2>
+            <button class="btn btn-sm" id="btn-closed-trades" style="font-size:0.8rem; padding:0.25rem 0.6rem; background:rgba(255,255,255,0.08); border:1px solid var(--border);">👁️ Скрыть</button>
+        </div>
+        <div id="body-closed-trades" style="margin-top: 1rem;">
+            <!-- 4 Institutional KPI Cards -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="background: rgba(0, 230, 118, 0.1); border: 1px solid var(--accent-green); border-radius: 12px; padding: 1rem; text-align: center;">
+                    <small style="color: var(--text-muted); font-size: 0.8rem;">Зафиксированный чистый кэш</small>
+                    <h3 style="margin: 0.2rem 0 0 0; color: var(--accent-green); font-size: 1.4rem;">+$248.03 USDT</h3>
+                </div>
+                <div style="background: rgba(41, 121, 255, 0.1); border: 1px solid var(--accent-blue); border-radius: 12px; padding: 1rem; text-align: center;">
+                    <small style="color: var(--text-muted); font-size: 0.8rem;">Средний ROE закрытых сделок</small>
+                    <h3 style="margin: 0.2rem 0 0 0; color: var(--accent-blue); font-size: 1.4rem;">+39.6%</h3>
+                </div>
+                <div style="background: rgba(213, 0, 249, 0.1); border: 1px solid var(--accent-purple); border-radius: 12px; padding: 1rem; text-align: center;">
+                    <small style="color: var(--text-muted); font-size: 0.8rem;">Винрейт среднесрочного контура</small>
+                    <h3 style="margin: 0.2rem 0 0 0; color: #a7f3d0; font-size: 1.4rem;">66.7%</h3>
+                    <small style="color: var(--text-muted); font-size: 0.72rem;">9 побед, 1 безубыток, 5 убытков</small>
+                </div>
+                <div style="background: rgba(255, 215, 0, 0.1); border: 1px solid #ffd700; border-radius: 12px; padding: 1rem; text-align: center;">
+                    <small style="color: var(--text-muted); font-size: 0.8rem;">Фактор профита</small>
+                    <h3 style="margin: 0.2rem 0 0 0; color: #ffd700; font-size: 1.4rem;">248.03</h3>
+                </div>
+            </div>
+
+            <!-- 8-Column Detailed Closed PnL Ledger Table -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Актив / Сделка</th>
+                        <th>Плечо</th>
+                        <th>Маржа ($)</th>
+                        <th>Вход ➔ Выход</th>
+                        <th>Ход цены (%)</th>
+                        <th>ROE на маржу (%)</th>
+                        <th>Реализованный PnL ($ USDT)</th>
+                        <th>Дата закрытия (UTC)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                        
+                        
+                        
+                        <tr>
+                            <td><b>SOLUSDT</b></td>
+                            <td><span class="badge badge-active" style="font-size:0.75rem;">5x</span></td>
+                            <td>$82.25</td>
+                            <td><b>$97.91463415</b> ➔ <b style="color: var(--accent-green);">$99.3</b></td>
+                            <td style="color: var(--accent-green); font-weight:600;">+1.41%</td>
+                            <td style="color: var(--accent-green); font-weight:700;">+7.05%</td>
+                            
+                            <td style="color: var(--accent-green); font-weight:700;">+$3.91726653 USDT</td>
+                            
+                            <td><small style="color: var(--text-muted);">2026-10-24 18:10</small></td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td><b>1000PEPEUSDT</b></td>
+                            <td><span class="badge badge-active" style="font-size:0.75rem;">3x</span></td>
+                            <td>$101.01</td>
+                            <td><b>$0.00436</b> ➔ <b style="color: var(--accent-green);">$0.004776</b></td>
+                            <td style="color: var(--accent-green); font-weight:600;">+9.54%</td>
+                            <td style="color: var(--accent-green); font-weight:700;">+28.62%</td>
+                            
+                            <td style="color: var(--accent-green); font-weight:700;">+$28.46629803 USDT</td>
+                            
+                            <td><small style="color: var(--text-muted);">2026-10-23 11:35</small></td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td><b>INJUSDT</b></td>
+                            <td><span class="badge badge-active" style="font-size:0.75rem;">3x</span></td>
+                            <td>$84.56</td>
+                            <td><b>$8.21</b> ➔ <b style="color: var(--accent-red);">$7.991</b></td>
+                            <td style="color: var(--accent-red); font-weight:600;">-2.67%</td>
+                            <td style="color: var(--accent-red); font-weight:700;">-8.01%</td>
+                            
+                            <td style="color: var(--accent-red); font-weight:700;">-$6.85760756 USDT</td>
+                            
+                            <td><small style="color: var(--text-muted);">2026-10-22 20:27</small></td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td><b>INJUSDT (Часть 1)</b></td>
+                            <td><span class="badge badge-active" style="font-size:0.75rem;">3x</span></td>
+                            <td>$50.72</td>
+                            <td><b>$7.11</b> ➔ <b style="color: var(--accent-green);">$7.66</b></td>
+                            <td style="color: var(--accent-green); font-weight:600;">+7.74%</td>
+                            <td style="color: var(--accent-green); font-weight:700;">+23.22%</td>
+                            
+                            <td style="color: var(--accent-green); font-weight:700;">+$11.77 USDT</td>
+                            
+                            <td><small style="color: var(--text-muted);">2026-10-15 18:03</small></td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td><b>LINKUSDT (Стоп-Лосс)</b></td>
+                            <td><span class="badge badge-active" style="font-size:0.75rem;">3x</span></td>
+                            <td>$150.37</td>
+                            <td><b>$13.307</b> ➔ <b style="color: var(--accent-red);">$11.845</b></td>
+                            <td style="color: var(--accent-red); font-weight:600;">-10.99%</td>
+                            <td style="color: var(--accent-red); font-weight:700;">-32.97%</td>
+                            
+                            <td style="color: var(--accent-red); font-weight:700;">-$49.56 USDT</td>
+                            
+                            <td><small style="color: var(--text-muted);">2026-10-15 16:31</small></td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td><b>AVAXUSDT (Стоп-Лосс)</b></td>
+                            <td><span class="badge badge-active" style="font-size:0.75rem;">3x</span></td>
+                            <td>$299.33</td>
+                            <td><b>$10.602</b> ➔ <b style="color: var(--accent-red);">$9.44</b></td>
+                            <td style="color: var(--accent-red); font-weight:600;">-10.96%</td>
+                            <td style="color: var(--accent-red); font-weight:700;">-32.88%</td>
+                            
+                            <td style="color: var(--accent-red); font-weight:700;">-$98.42 USDT</td>
+                            
+                            <td><small style="color: var(--text-muted);">2026-10-15 05:24</small></td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td><b>DOGEUSDT (Стоп-Лосс)</b></td>
+                            <td><span class="badge badge-active" style="font-size:0.75rem;">3x</span></td>
+                            <td>$265.5</td>
+                            <td><b>$0.0904</b> ➔ <b style="color: var(--accent-red);">$0.0811</b></td>
+                            <td style="color: var(--accent-red); font-weight:600;">-10.29%</td>
+                            <td style="color: var(--accent-red); font-weight:700;">-30.87%</td>
+                            
+                            <td style="color: var(--accent-red); font-weight:700;">-$81.94 USDT</td>
+                            
+                            <td><small style="color: var(--text-muted);">2026-10-08 20:25</small></td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td><b>ENAUSDT (Стоп-Лосс)</b></td>
+                            <td><span class="badge badge-active" style="font-size:0.75rem;">3x</span></td>
+                            <td>$301.09</td>
+                            <td><b>$0.2359</b> ➔ <b style="color: var(--accent-red);">$0.20979</b></td>
+                            <td style="color: var(--accent-red); font-weight:600;">-11.07%</td>
+                            <td style="color: var(--accent-red); font-weight:700;">-33.21%</td>
+                            
+                            <td style="color: var(--accent-red); font-weight:700;">-$99.98 USDT</td>
+                            
+                            <td><small style="color: var(--text-muted);">2026-10-08 18:19</small></td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td><b>AAVEUSDT (Часть 1)</b></td>
+                            <td><span class="badge badge-active" style="font-size:0.75rem;">3x</span></td>
+                            <td>$97.8</td>
+                            <td><b>$90.94</b> ➔ <b style="color: var(--accent-green);">$125.0</b></td>
+                            <td style="color: var(--accent-green); font-weight:600;">+37.45%</td>
+                            <td style="color: var(--accent-green); font-weight:700;">+112.35%</td>
+                            
+                            <td style="color: var(--accent-green); font-weight:700;">+$103.88 USDT</td>
+                            
+                            <td><small style="color: var(--text-muted);">2026-08-22 07:14</small></td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td><b>AAVEUSDT (Часть 2)</b></td>
+                            <td><span class="badge badge-active" style="font-size:0.75rem;">3x</span></td>
+                            <td>$92.76</td>
+                            <td><b>$90.94</b> ➔ <b style="color: var(--accent-green);">$172.96</b></td>
+                            <td style="color: var(--accent-green); font-weight:600;">+90.19%</td>
+                            <td style="color: var(--accent-green); font-weight:700;">+270.57%</td>
+                            
+                            <td style="color: var(--accent-green); font-weight:700;">+$250.96 USDT</td>
+                            
+                            <td><small style="color: var(--text-muted);">2026-09-29 15:35</small></td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td><b>SOLUSDT (Часть 1)</b></td>
+                            <td><span class="badge badge-active" style="font-size:0.75rem;">5x</span></td>
+                            <td>$80.35</td>
+                            <td><b>$97.91</b> ➔ <b style="color: var(--accent-green);">$118.19</b></td>
+                            <td style="color: var(--accent-green); font-weight:600;">+20.71%</td>
+                            <td style="color: var(--accent-green); font-weight:700;">+103.55%</td>
+                            
+                            <td style="color: var(--accent-green); font-weight:700;">+$81.12 USDT</td>
+                            
+                            <td><small style="color: var(--text-muted);">2026-09-21 17:21</small></td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td><b>RENDERUSDT (100%)</b></td>
+                            <td><span class="badge badge-active" style="font-size:0.75rem;">3x</span></td>
+                            <td>$74.91</td>
+                            <td><b>$1.33</b> ➔ <b style="color: var(--accent-green);">$1.589</b></td>
+                            <td style="color: var(--accent-green); font-weight:600;">+19.47%</td>
+                            <td style="color: var(--accent-green); font-weight:700;">+58.41%</td>
+                            
+                            <td style="color: var(--accent-green); font-weight:700;">+$43.2 USDT</td>
+                            
+                            <td><small style="color: var(--text-muted);">2026-09-19 07:13</small></td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td><b>INJUSDT (100%)</b></td>
+                            <td><span class="badge badge-active" style="font-size:0.75rem;">3x</span></td>
+                            <td>$48.53</td>
+                            <td><b>$5.6</b> ➔ <b style="color: var(--accent-green);">$6.808</b></td>
+                            <td style="color: var(--accent-green); font-weight:600;">+21.57%</td>
+                            <td style="color: var(--accent-green); font-weight:700;">+64.71%</td>
+                            
+                            <td style="color: var(--accent-green); font-weight:700;">+$31.11 USDT</td>
+                            
+                            <td><small style="color: var(--text-muted);">2026-09-18 14:43</small></td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td><b>TAOUSDT (100%)</b></td>
+                            <td><span class="badge badge-active" style="font-size:0.75rem;">3x</span></td>
+                            <td>$49.69</td>
+                            <td><b>$231.5</b> ➔ <b style="color: var(--accent-green);">$277.72</b></td>
+                            <td style="color: var(--accent-green); font-weight:600;">+19.96%</td>
+                            <td style="color: var(--accent-green); font-weight:700;">+59.88%</td>
+                            
+                            <td style="color: var(--accent-green); font-weight:700;">+$29.58 USDT</td>
+                            
+                            <td><small style="color: var(--text-muted);">2026-09-21 12:24</small></td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td><b>SUIUSDT (Безубыток)</b></td>
+                            <td><span class="badge badge-active" style="font-size:0.75rem;">3x</span></td>
+                            <td>$25.0</td>
+                            <td><b>$0.7422</b> ➔ <b style="color: var(--accent-green);">$0.75</b></td>
+                            <td style="color: var(--accent-green); font-weight:600;">+1.05%</td>
+                            <td style="color: var(--accent-green); font-weight:700;">+3.15%</td>
+                            
+                            <td style="color: var(--accent-green); font-weight:700;">+$0.78 USDT</td>
+                            
+                            <td><small style="color: var(--text-muted);">2026-09-10 14:47</small></td>
+                        </tr>
+                        
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- NEWS & MACRO INTELLIGENCE CARD -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="toggleCard('news-intel')">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+                <h2 style="margin:0;">📰 МОНИТОРИНГ НОВОСТЕЙ И МАКРО-РАЗВЕДКА (Live Market News & Forecast)</h2>
+                <span class="badge badge-danger" style="font-size:0.8rem;">
+                    Осторожный / Медвежий (Преобладание макро-рисков)
+                </span>
+            </div>
+            <button class="btn btn-sm" id="btn-news-intel" style="font-size:0.8rem; padding:0.25rem 0.6rem; background:rgba(255,255,255,0.08); border:1px solid var(--border);">👁️ Скрыть</button>
+        </div>
+        <div id="body-news-intel" style="margin-top: 1rem;">
+            <!-- Top Controls & Metrics -->
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem; background: rgba(0,0,0,0.3); padding: 0.9rem 1.2rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+                <div style="display:flex; gap:1.5rem; flex-wrap:wrap; font-size:0.9rem;">
+                    <div>🧭 Фон рынка: <b style="color: var(--accent-red);">Осторожный / Медвежий (Преобладание макро-рисков)</b></div>
+                    <div>⚡ Срочные триггеры: <b style="color:#ffd600;">7 событий</b></div>
+                    <div>⏰ Скан: <span style="color:var(--text-muted);">2026-10-25 21:51</span></div>
+                </div>
+                <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+                    <button class="btn btn-sm" style="background: linear-gradient(135deg, #00e5ff, #00b0ff); color:#000; font-weight:700;" onclick="triggerNewsScan()">⚡ Сканировать Новости</button>
+                    <button class="btn btn-sm" style="background: linear-gradient(135deg, #7c4dff, #651fff); color:#fff; font-weight:600;" onclick="triggerNewsDigest()">📢 Отправить Сводку в TG</button>
+                </div>
+            </div>
+
+            <!-- News Items Cards -->
+            <div style="display: flex; flex-direction: column; gap: 0.85rem;" id="news-container">
+                
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 82, 82, 0.4); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-danger" style="font-size: 0.75rem;">
+                                        🔴 РИСК ПРОСАДКИ / ДАМП
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinDesk
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 8/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://www.coindesk.com/markets/2026/10/24/crypto-under-weekend-pressure-bitcoin-slides-below-usd80-000-on-u-s-middle-east-evacuations" target="_blank" style="color: #f8fafc; text-decoration: none;">Crypto under weekend pressure, bitcoin slides below $80,000 on U.S. Middle East evacuations</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Bitcoin has sunk to its weakest level in more than one month.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-red);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Ожидается локальный сквиз и давление на альты. Геополитический шок и переход в защитные активы (Gold/Cash).</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">⚠️ Защита капитала: не усредняться с рынка, удерживать стопы и ждать сквиза.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(0, 230, 118, 0.4); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-active" style="font-size: 0.75rem;">
+                                        🟢 ПОТЕНЦИАЛ РОСТА / ПАМП
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinDesk
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 8/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://www.coindesk.com/business/2026/10/23/why-mcdonalds-microsoft-and-google-saying-no-to-tokenized-stocks-isn-t-a-dealbreaker" target="_blank" style="color: #f8fafc; text-decoration: none;">Why McDonalds, Microsoft and Google saying no to tokenized stocks isn&#39;t a dealbreaker</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Some of the world&#39;s biggest companies objected to being listed on the first tokenized securities trading venue under the SEC&#39;s innovation exemption. But the early pushback may say more about issuer caution than about rejection of tokenizati
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-green);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Положительный фундаментальный импульс. Крупное институциональное или технологическое партнёрство.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">🚀 Благоприятно для позиций всего рынка.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 82, 82, 0.4); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-danger" style="font-size: 0.75rem;">
+                                        🔴 РИСК ПРОСАДКИ / ДАМП
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinDesk
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 8/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://www.coindesk.com/policy/2026/10/24/u-s-clarity-act-failure-gives-asia-and-middle-east-a-competitive-edge-says-apex-group-ceo" target="_blank" style="color: #f8fafc; text-decoration: none;">U.S. Clarity Act failure gives Asia and Middle East a competitive edge, says Apex Group CEO</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Apex Group CEO Peter Hughes warned that the failure of the U.S. Clarity Act will drive digital asset businesses toward faster-moving jurisdictions in Asia and the Middle East.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-red);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Ожидается локальный сквиз и давление на альты. Геополитический шок и переход в защитные активы (Gold/Cash).</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">⚠️ Защита капитала: не усредняться с рынка, удерживать стопы и ждать сквиза.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 82, 82, 0.4); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-danger" style="font-size: 0.75rem;">
+                                        🔴 РИСК ПРОСАДКИ / ДАМП
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinTelegraph
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 8/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://cointelegraph.com/news/netanyahu-floats-use-of-blockchain-as-solution-to-potential-financial-sanctions?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound" target="_blank" style="color: #f8fafc; text-decoration: none;">Netanyahu floats use of blockchain as solution to potential financial sanctions</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Ahead of elections, Prime Minister Benjamin Netanyahu said Israel could turn to blockchain and crypto to skirt potential international sanctions, to the dismay of opponents and the country’s central banker.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-red);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Ожидается локальный сквиз и давление на альты. Геополитический шок и переход в защитные активы (Gold/Cash).</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">⚠️ Защита капитала: не усредняться с рынка, удерживать стопы и ждать сквиза.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 82, 82, 0.4); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-danger" style="font-size: 0.75rem;">
+                                        🔴 РИСК ПРОСАДКИ / ДАМП
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinTelegraph
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 8/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://cointelegraph.com/news/initia-halts-blockchain-exploit-drained?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound" target="_blank" style="color: #f8fafc; text-decoration: none;">Initia halts blockchain after exploit reportedly drains over $2.6M</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    The blockchain suspended its layer-1 network and rollups after security researchers identified unauthorized token minting and millions in assets transferred to Ethereum.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-red);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Ожидается локальный сквиз и давление на альты. Взлом смарт-контракта / эксплойт ликвидности.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">⚠️ Защита капитала: не усредняться с рынка, удерживать стопы и ждать сквиза.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(0, 230, 118, 0.4); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-active" style="font-size: 0.75rem;">
+                                        🟢 ПОТЕНЦИАЛ РОСТА / ПАМП
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        Decrypt
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 8/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://decrypt.co/381775/google-quietly-updates-privacy-policy-gmail-photos-ads" target="_blank" style="color: #f8fafc; text-decoration: none;">Google Quietly Updates Privacy Policy to Let Gmail and Photos Data Feed Ads</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    A policy change effective Oct. 16 carves out an exception to Google’s long-standing pledge—letting connected Gmail, Drive, and Photos data personalize ads through its Personal Intelligence AI features.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-green);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Положительный фундаментальный импульс. Крупное институциональное или технологическое партнёрство.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">🚀 Благоприятно для позиций всего рынка.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 82, 82, 0.4); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-danger" style="font-size: 0.75rem;">
+                                        🔴 РИСК ПРОСАДКИ / ДАМП
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        Decrypt
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 8/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://decrypt.co/381758/netanyahu-crypto-plan-banking-sanctions-israel" target="_blank" style="color: #f8fafc; text-decoration: none;">Netanyahu Considering Crypto Plan to Dodge Banking Sanctions on Israel</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Days before Israel’s election, Netanyahu said he has asked for a blockchain plan in case banks are hit with sanctions, and told Israelis to prepare for a rainy day after Trump.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-red);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Ожидается локальный сквиз и давление на альты. Геополитический шок и переход в защитные активы (Gold/Cash).</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">⚠️ Защита капитала: не усредняться с рынка, удерживать стопы и ждать сквиза.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(0, 230, 118, 0.4); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-active" style="font-size: 0.75rem;">
+                                        🟢 ПОТЕНЦИАЛ РОСТА / ПАМП
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinDesk
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 6/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://www.coindesk.com/markets/2026/10/23/robinhood-sees-surge-in-bitcoin-gold-prediction-markets-as-traders-move-beyond-sports" target="_blank" style="color: #f8fafc; text-decoration: none;">Robinhood sees surge in bitcoin, gold prediction markets as traders move beyond sports</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    The company&#39;s head of futures and prediction markets said bitcoin, gold and oil contracts are among its fastest-growing prediction markets.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-green);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Положительный фундаментальный импульс. Технический пробой сопротивления и бычий моментум.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">🚀 Благоприятно для позиций всего рынка.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinDesk
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://www.coindesk.com/business/2026/10/25/latvia-targets-tokenization-rules-in-2027-with-commercial-property-in-focus" target="_blank" style="color: #f8fafc; text-decoration: none;">Latvia targets tokenization rules in 2027 with commercial property in focus</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Economics Minister Viktors Valainis says rules could arrive in the first half of next year, but an overdue assessment remains unfinished and no sovereign-bond issuance was identified.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinDesk
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://www.coindesk.com/policy/2026/10/22/uk-banks-face-10-000-complaints-in-3-months-over-crypto-restrictions" target="_blank" style="color: #f8fafc; text-decoration: none;">UK banks face 10,000 complaints in 3 months over crypto restrictions</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    The U.K. claims to aspire to become a global cryptocurrency hub, an ambition that would appear to be at odds with the attitude to crypto purchases of its major banks.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinDesk
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://www.coindesk.com/business/2026/10/24/strategy-strive-face-balancing-act-between-bitcoin-buying-and-preferred-stock-dividends" target="_blank" style="color: #f8fafc; text-decoration: none;">Strategy, Strive face balancing act between bitcoin buying and preferred stock dividends</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    The securities have financed purchases of nearly 136,000 bitcoin, opening a funding channel that analysts expect to complement the larger ETF market.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinDesk
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://www.coindesk.com/tech/2026/10/24/block-s-new-voice-ai-sounds-eerily-human-sparking-awe-and-scam-fears" target="_blank" style="color: #f8fafc; text-decoration: none;">Block&#39;s new voice AI sounds eerily human, sparking awe and scam fears</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Reactions split between amazement at how human it sounds and fears it could fuel scams and deception, with CZ eyeing uses in children’s education.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinDesk
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://www.coindesk.com/business/2026/10/24/argentina-drops-criminal-probe-into-president-milei-over-crashed-memecoin-libra" target="_blank" style="color: #f8fafc; text-decoration: none;">Argentina drops criminal probe into President Milei over crashed memecoin LIBRA</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    The judge found that Milei&#39;s promotion of LIBRA did not constitute fraud, despite the attention his support drew to the token.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinDesk
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://www.coindesk.com/business/2026/10/24/wells-fargo-cisco-marvell-among-latest-firms-objecting-to-okxice-s-tokenized-stock-plan" target="_blank" style="color: #f8fafc; text-decoration: none;">Wells Fargo, Cisco, Marvell among latest firms objecting to OKXICE&#39;s tokenized stock plan</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Six more companies have objected to listing tokenized versions of their stock on the venue, Reuters reported, bringing the total to 22.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinDesk
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://www.coindesk.com/business/2026/10/24/bitcoin-s-wealthy-holders-turning-to-loans-and-yield-as-investment-habits-mature-xapo-ceo" target="_blank" style="color: #f8fafc; text-decoration: none;">Bitcoin’s wealthy holders turning to loans and yield as investment habits mature: Xapo CEO</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Borrowing against bitcoin and earning income to build their BTC holdings are becoming priorities for long-term investors, Xapo Bank CEO Seamus Rocca told CoinDesk.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinDesk
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://www.coindesk.com/markets/2026/10/24/franklin-templeton-adds-usd150-million-in-fund-shares-to-xrp-ledger-all-in-one-wallet" target="_blank" style="color: #f8fafc; text-decoration: none;">Franklin Templeton adds $150 million in fund shares to XRP Ledger, all in one wallet</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Two subscriptions on Thursday nearly quadrupled the fund’s tokens on the network. The receiving wallet shares its authorized signers with the issuer.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinTelegraph
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://cointelegraph.com/news/ecb-official-sees-digital-euro-tool-to-protect-eu-sovereignty?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound" target="_blank" style="color: #f8fafc; text-decoration: none;">ECB official sees digital euro as key to protecting EU ‘sovereignty’</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Piero Cipollone said the bloc is on track to test real transactions in 2027 and roll out a digital euro as early as 2029, pending legislation this year.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinTelegraph
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://cointelegraph.com/news/nasdaq-companies-object-tokenized-stock-listings-okx-ice?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound" target="_blank" style="color: #f8fafc; text-decoration: none;">Wells Fargo and five others object to OKX-ICE tokenized stock listings: Report</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    As of Friday, 22 companies had filed objections as part of the joint venture’s proposed tokenized stock platform under the SEC’s innovation exemption.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinTelegraph
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://cointelegraph.com/news/irs-plans-lower-penalties-for-crypto-tax-disclosures-forbes-reports?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound" target="_blank" style="color: #f8fafc; text-decoration: none;">IRS plans lower tax disclosure penalties, including for crypto: Forbes</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    The US tax agency is targeting faster resolutions and more flexible payment options for taxpayers voluntarily disclosing past tax violations under a planned program overhaul.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinTelegraph
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://cointelegraph.com/news/us-senator-probe-bo-hines-trump-crypto-adviser-tether-deal?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound" target="_blank" style="color: #f8fafc; text-decoration: none;">US senator probes Tether after reported deal with ex-Trump crypto adviser</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    The Democratic ranking member of the Senate Permanent Subcommittee on Investigations asked Paolo Ardoino for records related to a reported deal between Tether and Nxum.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinTelegraph
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://cointelegraph.com/news/sec-adds-tokenized-securities-to-2027-examination-priorities?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound" target="_blank" style="color: #f8fafc; text-decoration: none;">SEC flags tokenization as high-risk area in 2027 market examinations</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    The SEC’s latest priorities highlight tokenization as an emerging market risk, while cryptocurrencies remain absent as a standalone examination category.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinTelegraph
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://cointelegraph.com/markets/bitcoin-seeks-support-above-81k-as-brent-crude-oil-hits-highest-level-since-march?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound" target="_blank" style="color: #f8fafc; text-decoration: none;">Bitcoin seeks support above $81K as Brent crude oil hits highest level since March</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Bitcoin dipped below $81,000 as stocks fell and Brent crude hit its highest level since March, leaving the 50-day moving average in focus.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinTelegraph
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://cointelegraph.com/news/what-happened-in-crypto-today?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound" target="_blank" style="color: #f8fafc; text-decoration: none;">Here’s what happened in crypto today</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Need to know what happened in crypto today? Here is the latest news on daily trends and events impacting Bitcoin price, blockchain, DeFi, Web3 and crypto regulation.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinTelegraph
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://cointelegraph.com/news/china-2030-national-blockchain-network-buildout?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound" target="_blank" style="color: #f8fafc; text-decoration: none;">China targets 2030 for its national blockchain network buildout</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    China’s five-year digital development plan calls for wider blockchain use in trade and manufacturing alongside stronger technical standards.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinTelegraph
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://cointelegraph.com/news/new-york-ag-novatech-founders-companies-crypto-ponzi?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound" target="_blank" style="color: #f8fafc; text-decoration: none;">New York AG seeks $1.37B from NovaTech founders over Ponzi scheme</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    The request follows an August 2025 default judgment, with the AG also announcing nearly $6 million in settlements with four promoters.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        CoinTelegraph
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://cointelegraph.com/markets/bitcoin-consolidates-after-3-loss-as-ai-fears-stoke-fresh-stock-market-weakness?utm_source=rss_feed&amp;utm_medium=rss&amp;utm_campaign=rss_partner_inbound" target="_blank" style="color: #f8fafc; text-decoration: none;">Bitcoin consolidates after 3% loss as AI fears stoke fresh stock-market weakness</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Bitcoin price volatility cooled as stock markets battled another day of resurgent AI fears during Friday’s Asia trading session.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        Decrypt
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://decrypt.co/381784/wells-fargo-cisco-intuit-more-companies-object-tokenized-stocks" target="_blank" style="color: #f8fafc; text-decoration: none;">Wells Fargo, Cisco, Intuit Among 6 More Companies Objecting to Tokenized Stocks</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Twenty-two companies have now objected to having their shares traded on the planned OKX-ICE tokenized stock venue, after Wells Fargo, Cisco, Marvell, Arm, Moderna. and Intuit joined the list.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        Decrypt
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://decrypt.co/381777/bitcoin-etfs-snap-two-week-losing-streak-despite-late-week-slide" target="_blank" style="color: #f8fafc; text-decoration: none;">Bitcoin ETFs Snap Two-Week Losing Streak Despite Late-Week Slide</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Spot Bitcoin ETFs finished the week with about $301 million in net inflows, ending a two-week losing streak, even as two straight days of outflows kept October in the red.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        Decrypt
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://decrypt.co/381763/sweden-government-offices-block-chatgpt-claude" target="_blank" style="color: #f8fafc; text-decoration: none;">Sweden&#39;s Government Offices Block ChatGPT and Claude, Keep Microsoft Copilot</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Sweden&#39;s Government Offices will block ChatGPT and Claude on staff computers from Monday, steering civil servants to Microsoft Copilot as the only AI that passed its security review.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 1rem 1.2rem; transition: transform 0.15s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                    <span class="badge badge-idle" style="font-size: 0.75rem;">
+                                        🟡 НЕЙТРАЛЬНО / ФЛЭТ
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.2);">
+                                        Decrypt
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: #ffd600; font-weight: 600;">
+                                        Влияние: 4/10
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: auto;">
+                                        2026-10-25 21:51:31
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0.2rem 0 0.4rem 0; font-size: 1.05rem; line-height: 1.35;">
+                                    <a href="https://decrypt.co/381674/game-publishers-have-pushed-to-cut-discs-since-2007-infinity-ward-veteran-says" target="_blank" style="color: #f8fafc; text-decoration: none;">Game Publishers Have Pushed to Cut Discs Since 2007, Infinity Ward Veteran Says</a>
+                                </h3>
+                                <p style="margin: 0 0 0.6rem 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.45;">
+                                    Robert Bowling, who spent six years working on Call of Duty, told Decrypt that Activision suggested cutting discs nearly two decades ago.
+                                </p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.6rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: var(--accent-blue);">🔮 Прогноз :</b>
+                                        <span style="color: #cbd5e1;">Рыночный фон стабилен, локальное накопление объёмов в текущем диапазоне.</span>
+                                    </div>
+                                    <div style="font-size: 0.84rem;">
+                                        <b style="color: #ffd600;">🛡️ Для портфеля :</b>
+                                        <span style="color: #cbd5e1;">Штатный режим: удержание открытых сеток и ожидание лимитных ордеров.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:1rem; cursor:pointer;" onclick="toggleCard('system-logs')">
+                <h2 style="margin:0;">📜 Системные Логи (Авто-обновление)</h2>
+                <button class="btn btn-sm" id="btn-system-logs" style="font-size:0.8rem; padding:0.25rem 0.6rem; background:rgba(255,255,255,0.08); border:1px solid var(--border);">👁️ Скрыть</button>
+            </div>
+            <button class="btn btn-sm" onclick="fetchLogs()">🔄 Обновить Логи</button>
+        </div>
+        <div id="body-system-logs" style="margin-top:1rem;">
+            <pre id="log-box">[2026-10-25 21:52:24] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,091,703.31 &lt; $15,000,000.
+[2026-10-25 21:52:38] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,101,539.49 &lt; $15,000,000.
+[2026-10-25 21:52:52] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,101,572.78 &lt; $15,000,000.
+[2026-10-25 21:53:06] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,104,074.09 &lt; $15,000,000.
+[2026-10-25 21:53:21] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,104,084.76 &lt; $15,000,000.
+[2026-10-25 21:53:36] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,092,157.43 &lt; $15,000,000.
+[2026-10-25 21:53:50] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,092,898.64 &lt; $15,000,000.
+[2026-10-25 21:54:04] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,094,714.04 &lt; $15,000,000.
+[2026-10-25 21:54:19] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,092,874.35 &lt; $15,000,000.
+[2026-10-25 21:54:33] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,093,598.87 &lt; $15,000,000.
+[2026-10-25 21:54:47] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,093,834.80 &lt; $15,000,000.
+[2026-10-25 21:55:01] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,094,943.79 &lt; $15,000,000.
+[2026-10-25 21:55:16] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,094,004.14 &lt; $15,000,000.
+[2026-10-25 21:55:29] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,094,097.66 &lt; $15,000,000.
+[2026-10-25 21:55:43] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,094,952.50 &lt; $15,000,000.
+[2026-10-25 21:55:57] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,095,403.40 &lt; $15,000,000.
+[2026-10-25 21:56:11] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,096,224.76 &lt; $15,000,000.
+[2026-10-25 21:56:26] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,096,544.05 &lt; $15,000,000.
+[2026-10-25 21:56:39] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,097,351.32 &lt; $15,000,000.
+[2026-10-25 21:56:53] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,097,369.62 &lt; $15,000,000.
+[2026-10-25 21:57:06] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,097,643.53 &lt; $15,000,000.
+[2026-10-25 21:57:20] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,091,619.33 &lt; $15,000,000.
+[2026-10-25 21:57:34] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,091,955.09 &lt; $15,000,000.
+[2026-10-25 21:57:38] [FLASK-SERVER] [+] Fast Dashboard Render: Loading local market database cache...
+[2026-10-25 21:57:39] [FLASK-SERVER] [LIQUIDITY_CUTOFF] Purging TAOUSDT from prime: turnover $13,091,955.09 &lt; $15,000,000.
+</pre>
+        </div>
+    </div>
+
+    <!-- PROPOSAL 2: ORDER GENERATOR MODAL -->
+    <div id="order-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="color: var(--accent-green); margin-top:0;">📐 Сформировать Ордера для Bybit</h2>
+            <p>Выбранный инструмент: <b id="modal-symbol" style="color: var(--accent-blue);"></b> (Цена: $<span id="modal-price"></span>)</p>
+            
+            <label style="color: var(--text-muted); font-size:0.85rem;">Депозит маржи ($ USDT):</label>
+            <input type="number" id="order-budget" value="100" min="10" step="10">
+            
+            <label style="color: var(--text-muted); font-size:0.85rem;">Плечо (Leverage):</label>
+            <select id="order-leverage">
+                <option value="3" selected>3x (Институциональный стандарт)</option>
+                <option value="5">5x</option>
+                <option value="10">10x</option>
+            </select>
+            
+            <button class="btn btn-success" onclick="generateOrderText()" style="width:100%; margin-bottom:1rem;">
+                🧮 Рассчитать объёмы и лимитки
+            </button>
+            
+            <textarea id="generated-text" rows="8" placeholder="Здесь появится готовый текст для расстановки на Bybit..." readonly></textarea>
+            
+            <div style="display:flex; gap:1rem;">
+                <button class="btn" onclick="copyOrderText()" style="flex:1;">📋 Скопировать</button>
+                <button class="btn btn-danger" onclick="closeOrderModal()" style="flex:1;">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentModalSymbol = '';
+        let currentModalPrice = 0;
+
+        function openOrderModal(symbol, price, leverageVal) {
+            currentModalSymbol = symbol;
+            currentModalPrice = price;
+            document.getElementById('modal-symbol').innerText = symbol;
+            document.getElementById('modal-price').innerText = price;
+            document.getElementById('generated-text').value = '';
+            
+            // Dynamic Audit Engine v11.1 validated leverage
+            const levNum = (leverageVal && leverageVal.includes('5x')) ? '5' : '3';
+            document.getElementById('order-leverage').value = levNum;
+            
+            document.getElementById('order-modal').style.display = 'flex';
+        }
+
+        function closeOrderModal() {
+            document.getElementById('order-modal').style.display = 'none';
+        }
+
+        function generateOrderText() {
+            const budget = parseFloat(document.getElementById('order-budget').value) || 100;
+            const leverage = parseFloat(document.getElementById('order-leverage').value) || 3;
+            
+            const marginO1 = Math.round(budget * 0.333 * 100) / 100;
+            const marginO2 = Math.round(budget * 0.333 * 100) / 100;
+            const marginO3 = Math.round((budget - marginO1 - marginO2) * 100) / 100;
+            
+            const isMacroPad = false;
+            
+            const priceO1 = isMacroPad ? formatPrice(currentModalPrice * 0.940) : formatPrice(currentModalPrice * 0.965);
+            const priceO2 = isMacroPad ? formatPrice(Number(priceO1) * 0.945) : formatPrice(Number(priceO1) * 0.964);
+            const priceO3 = isMacroPad ? formatPrice(Number(priceO2) * 0.940) : formatPrice(Number(priceO2) * 0.955);
+            const sl = isMacroPad ? formatPrice(Number(priceO3) * 0.910) : formatPrice(Number(priceO3) * 0.940);
+            const tp1 = formatPrice(Number(priceO1) * 1.200);
+            const tp2 = formatPrice(Number(priceO2) * 1.300);
+            const tp3 = formatPrice(Number(priceO1) * 1.400);
+            
+            const qtyO1 = ((marginO1 * leverage) / Number(priceO1)).toFixed(2);
+            const qtyO2 = ((marginO2 * leverage) / Number(priceO2)).toFixed(2);
+            const qtyO3 = ((marginO3 * leverage) / Number(priceO3)).toFixed(2);
+            const token = currentModalSymbol.replace('USDT', '');
+            
+            const timingTag = isMacroPad ? " [v13.5 Расширенная сетка -6%..-16.5% (Выходные/Макро)]" : " [Стандартная сетка -3.5%..-11.2%]";
+            const text = `🎯 3-ОРДЕРНАЯ ИНСТРУКЦИЯ ДЛЯ ${currentModalSymbol} (Плечо ${leverage}x, Депозит $${budget})${timingTag}:\n\n` +
+                `📍 ОРДЕР №1 (${isMacroPad ? '4H OB Deep -6.0%' : '4H OB -3.5%'}):\n` +
+                `  • Лимитная цена: $${priceO1}\n` +
+                `  • Объём: ${qtyO1} ${token} (Маржа ~$${marginO1} USDT)\n` +
+                `  • TP1: $${tp1} | SL: $${sl}\n\n` +
+                `⏳ ОРДЕР №2 (${isMacroPad ? '4H FVG -11.2%' : '4H FVG -7.0%'}):\n` +
+                `  • Лимитная цена: $${priceO2}\n` +
+                `  • Объём: ${qtyO2} ${token} (Маржа ~$${marginO2} USDT)\n` +
+                `  • TP2: $${tp2} | SL: $${sl}\n\n` +
+                `🛡️ ОРДЕР №3 (${isMacroPad ? '1D Flush Support -16.5%' : '1D Major Support -11.2%'}):\n` +
+                `  • Лимитная цена: $${priceO3}\n` +
+                `  • Объём: ${qtyO3} ${token} (Маржа ~$${marginO3} USDT)\n` +
+                `  • TP3: $${tp3} | SL: $${sl}`;
+                
+            document.getElementById('generated-text').value = text;
+        }
+
+        function copyOrderText() {
+            const txt = document.getElementById('generated-text');
+            txt.select();
+            document.execCommand('copy');
+            alert('✅ Текст ордеров скопирован в буфер обмена!');
+        }
+
+        function triggerScan(sendTg) {
+            const token = document.getElementById('api-token').value;
+            const statusDiv = document.getElementById('action-status');
+            statusDiv.style.color = '#00e5ff';
+            statusDiv.innerText = sendTg ? '⏳ Запуск сканера рынка и формирование отчета для Telegram...' : '🔄 Запрос свежих котировок с Bybit и перерасчет статистики на сайте...';
+            
+            fetch('/api/scan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Syndicate-Token': token
+                },
+                body: JSON.stringify({send_telegram: sendTg, force: sendTg})
+            })
+            .then(res => res.json().then(data => ({status: res.status, body: data})))
+            .then(res => {
+                if(res.status === 200) {
+                    statusDiv.style.color = 'var(--accent-green)';
+                    statusDiv.innerText = '✅ ' + res.body.message + (sendTg ? ' (Отчёт успешно отправлен в Telegram!)' : ' (Дашборд обновлён)');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    statusDiv.style.color = 'var(--accent-red)';
+                    statusDiv.innerText = '❌ ' + (res.body.error || res.body.message);
+                }
+            })
+            .catch(err => {
+                statusDiv.style.color = 'var(--accent-red)';
+                statusDiv.innerText = '❌ Ошибка запроса: ' + err;
+            });
+        }
+
+        function triggerBybitSync() {
+            const token = document.getElementById('api-token').value;
+            const statusDiv = document.getElementById('action-status');
+            statusDiv.style.color = '#7c4dff';
+            statusDiv.innerText = '⚡ Синхронизация открытых и закрытых позиций с Bybit V5...';
+            
+            fetch('/api/bybit/sync', {
+                method: 'POST',
+                headers: {
+                    'X-Syndicate-Token': token
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    statusDiv.style.color = 'var(--accent-green)';
+                    statusDiv.innerText = '✅ ' + (data.message || 'Синхронизация с Bybit выполнена!');
+                    fetchOrdersData();
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    statusDiv.style.color = 'var(--accent-red)';
+                    statusDiv.innerText = '❌ Ошибка синхронизации: ' + (data.message || data.status);
+                }
+            })
+            .catch(err => {
+                statusDiv.style.color = 'var(--accent-red)';
+                statusDiv.innerText = '❌ Ошибка сети: ' + err;
+            });
+        }
+
+
+        function toggleDaemon(action) {
+            const token = document.getElementById('api-token').value;
+            fetch('/api/daemon/' + action, {
+                method: 'POST',
+                headers: {'X-Syndicate-Token': token}
+            })
+            .then(res => res.json().then(data => ({status: res.status, body: data})))
+            .then(res => {
+                if(res.status === 200) {
+                    alert(res.body.message);
+                    location.reload();
+                } else {
+                    alert('Ошибка: ' + (res.body.error || res.body.message));
+                }
+            });
+        }
+
+        function fetchLogs() {
+            fetch('/api/logs?lines=30')
+            .then(res => res.json())
+            .then(data => {
+                if(data.logs) {
+                    document.getElementById('log-box').innerText = data.logs.join('');
+                }
+            });
+        }
+
+        function formatPrice(val) {
+            if (val === null || val === undefined || val === 0) return '0.00';
+            const num = Number(val);
+            if (isNaN(num)) return String(val);
+            if (num < 0.0001) return num.toFixed(8).replace(/\.?0+$/, '');
+            if (num < 0.01) return num.toFixed(6).replace(/\.?0+$/, '');
+            if (num < 1.0) return num.toFixed(4);
+            return num.toFixed(2);
+        }
+
+        function fetchOrdersData() {
+            fetch('/api/orders')
+            .then(res => res.json())
+            .then(data => {
+                const orders = data.active_orders_eval || [];
+                const tbody = document.querySelector('#orders-tbody');
+                if(!tbody) return;
+                
+                let html = '';
+                orders.forEach(ord => {
+                    const isFilled = (ord.status_code || '').includes('FILLED');
+                    const badgeClass = isFilled ? 'badge-active' : 'badge-idle';
+                    const pnlColor = ord.pnl_pct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+                    
+                    const o2Html = (ord.order_2_price && Number(ord.order_2_price) > 0)
+                        ? ((ord.o2_is_filled || (ord.status_code || '').includes('BOTH_FILLED') || (ord.status_code || '').includes('ALL_FILLED'))
+                            ? `<br><small style="color: var(--accent-green); font-weight:600;">🟢 О2: $${formatPrice(ord.order_2_price)} (В позиции)</small>`
+                            : (ord.o1_closed_tp
+                                ? `<br><small style="color: var(--accent-blue); font-weight:600;">⏳ О2: $${formatPrice(ord.order_2_price)} (В стакане)</small>`
+                                : `<br><small style="color: var(--text-muted); font-weight:600;">⏳ О2: $${formatPrice(ord.order_2_price)} (В стакане)</small>`))
+                        : '';
+
+                    const o3Html = (ord.order_3_price && Number(ord.order_3_price) > 0)
+                        ? ((ord.o3_is_filled || (ord.status_code || '').includes('ALL_FILLED'))
+                            ? `<br><small style="color: var(--accent-green); font-weight:600;">🟢 О3: $${formatPrice(ord.order_3_price)} (В позиции)</small>`
+                            : `<br><small style="color: #38bdf8; font-weight:600;">⏳ О3: $${formatPrice(ord.order_3_price)} (В стакане)</small>`)
+                        : '';
+
+                    const entryHtml = ord.actual_entry_price 
+                        ? (ord.o1_closed_tp
+                            ? `<b style="color: var(--accent-green);">Ср. Вход: $${formatPrice(ord.actual_entry_price)}</b><br><small style="color: var(--accent-green); font-weight:600;">✅ О1: $${formatPrice(ord.order_1_price)} (Закрыт TP1)</small>${o2Html}${o3Html}`
+                            : `<b style="color: var(--accent-green);">Ср. Вход: $${formatPrice(ord.actual_entry_price)}</b><br><small style="color: var(--accent-green); font-weight:600;">🟢 О1: $${formatPrice(ord.order_1_price)} (В позиции)</small>${o2Html}${o3Html}`)
+                        : `<b>О1: $${formatPrice(ord.order_1_price)}</b> ${ord.order_2_price ? '| <b>О2: $' + formatPrice(ord.order_2_price) + '</b>' : ''} ${ord.order_3_price ? '| <b style="color: #38bdf8;">О3: $' + formatPrice(ord.order_3_price) + '</b>' : ''}`;
+
+                    const tpHtml = ord.o1_closed_tp
+                        ? `🎯 <s style="color: var(--text-muted);">TP1: $${formatPrice(ord.tp1)}</s> <b style="color: var(--accent-green);">(Исполнен ✅)</b><br>🚀 TP2: <b>$${formatPrice(ord.tp2)}</b>${ord.tp3 ? '<br>🎯 TP3: <b>$' + formatPrice(ord.tp3) + '</b>' : ''}`
+                        : `🎯 TP1: <b>$${formatPrice(ord.tp1)}</b> ${ord.tp2 ? '| TP2: <b>$' + formatPrice(ord.tp2) + '</b>' : ''} ${ord.tp3 ? '| TP3: <b>$' + formatPrice(ord.tp3) + '</b>' : ''}<br>⚖️ БУ (+10%): <small style="color: var(--text-muted);">$${formatPrice(ord.breakeven_trigger_price)}</small>`;
+                    
+                    let distHtml = '';
+                    if(!ord.actual_entry_price) {
+                        const dist = (((ord.order_1_price - ord.current_price) / ord.current_price) * 100).toFixed(2);
+                        distHtml = `<span style="color: var(--accent-blue);">${dist}% до О1</span>`;
+                    } else if (ord.o1_closed_tp && !ord.o2_is_filled && !ord.o3_is_filled) {
+                        distHtml = `<span style="color: var(--accent-blue);">О2 в стакане</span>`;
+                    } else {
+                        distHtml = `<span style="color: var(--accent-green);">В позиции</span>`;
+                    }
+
+                    const pnlHtml = (ord.o1_closed_tp && !ord.o2_is_filled && !ord.o3_is_filled)
+                        ? `<span style="color: var(--accent-green); font-size:0.85rem;">TP1 в кэше ✅<br><small style="color:var(--text-muted);">(0.00 USDT в рынке)</small></span>`
+                        : (ord.actual_entry_price
+                            ? `<b style="color:${pnlColor}">${ord.pnl_pct}%</b> (${ord.usd_pnl >= 0 ? '$' : '-$'}${Math.abs(ord.usd_pnl)} USDT)`
+                            : `<span style="color: var(--text-muted);">0.00%</span>`);
+
+                    html += `<tr>
+                        <td><b>${ord.symbol}</b><br><span class="badge ${badgeClass}" style="font-size:0.75rem;">${ord.order_status_str}</span></td>
+                        <td>${entryHtml}</td>
+                        <td><b>$${formatPrice(ord.current_price)}</b></td>
+                        <td><span style="color: var(--accent-green); font-weight:600;">H: $${formatPrice(ord.high_24h || ord.current_price)}</span><br><span style="color: var(--accent-purple); font-weight:600;">L: $${formatPrice(ord.low_24h || ord.current_price)}</span></td>
+                        <td>${distHtml}</td>
+                        <td>${pnlHtml}</td>
+                        <td>🛡️ SL: <b>$${formatPrice(ord.current_stop_loss)}</b><br>🔒 Liq: <small style="color: #e2e8f0;">$${formatPrice(ord.liq_price)}</small></td>
+                        <td>${tpHtml}</td>
+                    </tr>`;
+                });
+                tbody.innerHTML = html;
+            });
+        }
+
+        // Collapsible cards state handling with localStorage persistence
+        function toggleCard(cardId) {
+            const body = document.getElementById('body-' + cardId);
+            const btn = document.getElementById('btn-' + cardId);
+            if (!body) return;
+            
+            if (body.style.display === 'none') {
+                body.style.display = 'block';
+                if (btn) btn.innerHTML = '👁️ Скрыть';
+                localStorage.setItem('collapse_' + cardId, 'expanded');
+            } else {
+                body.style.display = 'none';
+                if (btn) btn.innerHTML = '🙈 Скрыто (Развернуть)';
+                localStorage.setItem('collapse_' + cardId, 'collapsed');
+            }
+        }
+
+        function triggerNewsScan() {
+            const btn = event.target;
+            const origText = btn.innerHTML;
+            btn.innerHTML = '⏳ Сканирование...';
+            btn.disabled = true;
+            fetch('/api/news/scan', { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    alert(data.message || 'Сканирование новостей завершено!');
+                    location.reload();
+                })
+                .catch(e => {
+                    alert('Ошибка сканирования: ' + e);
+                    btn.innerHTML = origText;
+                    btn.disabled = false;
+                });
+        }
+
+        function triggerNewsDigest() {
+            const btn = event.target;
+            const origText = btn.innerHTML;
+            btn.innerHTML = '⏳ Отправка в TG...';
+            btn.disabled = true;
+            fetch('/api/news/digest', { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    alert(data.message || 'Сводка отправлена в Telegram!');
+                    btn.innerHTML = origText;
+                    btn.disabled = false;
+                })
+                .catch(e => {
+                    alert('Ошибка отправки: ' + e);
+                    btn.innerHTML = origText;
+                    btn.disabled = false;
+                });
+        }
+
+        function initCollapsibles() {
+            const cardIds = ['control-panel', 'prime-candidates', 'pretenders', 'active-orders', 'closed-trades', 'news-intel', 'system-logs'];
+            cardIds.forEach(id => {
+                const state = localStorage.getItem('collapse_' + id);
+                const body = document.getElementById('body-' + id);
+                const btn = document.getElementById('btn-' + id);
+                if (state === 'collapsed' && body) {
+                    body.style.display = 'none';
+                    if (btn) btn.innerHTML = '🙈 Скрыто (Развернуть)';
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initCollapsibles);
+
+        // Auto refresh logs & orders table every 10 seconds automatically!
+        setInterval(fetchLogs, 10000);
+        setInterval(fetchOrdersData, 10000);
+    </script>
+</body>
+</html>
