@@ -744,20 +744,28 @@
         <div class="calc-form-grid">
             <div class="form-group">
                 <label class="form-label">Торговый инструмент</label>
-                <input type="text" id="symbol-input" class="form-input" value="TAOUSDT" placeholder="BTCUSDT, TAOUSDT...">
+                <input type="text" id="symbol-input" class="form-input" value="BTCUSDT" placeholder="BTCUSDT, TAOUSDT...">
                 <div class="quick-coins">
-                    <span class="coin-chip active" onclick="setCoin('TAOUSDT', 580.40)">TAO</span>
-                    <span class="coin-chip" onclick="setCoin('BTCUSDT', 67800.00)">BTC</span>
-                    <span class="coin-chip" onclick="setCoin('ETHUSDT', 2550.00)">ETH</span>
-                    <span class="coin-chip" onclick="setCoin('SOLUSDT', 178.50)">SOL</span>
-                    <span class="coin-chip" onclick="setCoin('NEARUSDT', 4.85)">NEAR</span>
-                    <span class="coin-chip" onclick="setCoin('SUIUSDT', 2.15)">SUI</span>
+                    <span class="coin-chip active" onclick="setCoin('BTCUSDT')">BTC</span>
+                    <span class="coin-chip" onclick="setCoin('ETHUSDT')">ETH</span>
+                    <span class="coin-chip" onclick="setCoin('SOLUSDT')">SOL</span>
+                    <span class="coin-chip" onclick="setCoin('TAOUSDT')">TAO</span>
+                    <span class="coin-chip" onclick="setCoin('NEARUSDT')">NEAR</span>
+                    <span class="coin-chip" onclick="setCoin('SUIUSDT')">SUI</span>
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="form-label">Текущая цена ($ USDT)</label>
-                <input type="number" id="price-input" class="form-input" value="580.40" step="any">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <label class="form-label">Текущая цена ($ USDT)</label>
+                    <span id="price-status" style="font-size:0.72rem; font-family:var(--font-mono); color:var(--accent-green);">
+                        🟢 Bybit V5 Live
+                    </span>
+                </div>
+                <div style="position:relative; display:flex; align-items:center;">
+                    <input type="number" id="price-input" class="form-input" value="80620.00" step="any" style="padding-right:2.2rem;">
+                    <button type="button" onclick="refreshCurrentPrice()" title="Запросить свежую цену с Bybit" style="position:absolute; right:8px; background:none; border:none; color:var(--accent-cyan); cursor:pointer; font-size:1.05rem; line-height:1; padding:2px;">🔄</button>
+                </div>
             </div>
 
             <div class="form-group">
@@ -927,15 +935,62 @@
         return val.toFixed(6);
     }
 
-    function setCoin(symbol, price) {
+    let livePriceAbortController = null;
+    let symbolDebounceTimer = null;
+
+    async function fetchBybitPrice(symbol) {
+        const priceStatus = document.getElementById('price-status');
+        if (priceStatus) {
+            priceStatus.innerHTML = '<span style="color:var(--accent-yellow);">⏳ Запрос Bybit V5...</span>';
+        }
+        try {
+            if (livePriceAbortController) {
+                livePriceAbortController.abort();
+            }
+            livePriceAbortController = new AbortController();
+            const cleanSym = symbol.toUpperCase().trim();
+            const querySym = cleanSym.endsWith('USDT') ? cleanSym : (cleanSym + 'USDT');
+            const url = `https://api.bybit.com/v5/market/tickers?category=linear&symbol=${encodeURIComponent(querySym)}`;
+            const res = await fetch(url, { signal: livePriceAbortController.signal });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            if (data.retCode === 0 && data.result && data.result.list && data.result.list.length > 0) {
+                const ticker = data.result.list[0];
+                const livePrice = parseFloat(ticker.lastPrice);
+                if (!isNaN(livePrice) && livePrice > 0) {
+                    document.getElementById('price-input').value = livePrice;
+                    if (priceStatus) {
+                        priceStatus.innerHTML = `<span style="color:var(--accent-green);">🟢 Bybit Live: $${formatNum(livePrice)}</span>`;
+                    }
+                    recalc();
+                    return;
+                }
+            }
+            if (priceStatus) {
+                priceStatus.innerHTML = `<span style="color:var(--text-muted);">Ручной ввод цены</span>`;
+            }
+        } catch (e) {
+            if (e.name !== 'AbortError') {
+                if (priceStatus) {
+                    priceStatus.innerHTML = `<span style="color:var(--text-muted);">Ручной ввод цены</span>`;
+                }
+            }
+        }
+    }
+
+    function setCoin(symbol) {
         document.getElementById('symbol-input').value = symbol;
-        document.getElementById('price-input').value = price;
         
         document.querySelectorAll('.coin-chip').forEach(el => {
             el.classList.toggle('active', el.innerText === symbol.replace('USDT', ''));
         });
         
-        recalc();
+        fetchBybitPrice(symbol);
+    }
+
+    function refreshCurrentPrice() {
+        const symbol = (document.getElementById('symbol-input').value || 'BTCUSDT').toUpperCase().trim();
+        fetchBybitPrice(symbol);
     }
 
     function recalc() {
@@ -1046,7 +1101,7 @@
     }
 
     // Event listeners
-    ['symbol-input', 'price-input', 'budget-input', 'leverage-input', 'preset-input'].forEach(id => {
+    ['budget-input', 'leverage-input', 'preset-input'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             el.addEventListener('input', recalc);
@@ -1054,7 +1109,36 @@
         }
     });
 
-    // Initial calculation on page load
+    const priceInputEl = document.getElementById('price-input');
+    if (priceInputEl) {
+        priceInputEl.addEventListener('input', () => {
+            const priceStatus = document.getElementById('price-status');
+            if (priceStatus) {
+                priceStatus.innerHTML = `<span style="color:var(--accent-cyan);">✍️ Ручной режим</span>`;
+            }
+            recalc();
+        });
+    }
+
+    const symbolInputEl = document.getElementById('symbol-input');
+    if (symbolInputEl) {
+        symbolInputEl.addEventListener('input', () => {
+            clearTimeout(symbolDebounceTimer);
+            const val = symbolInputEl.value.trim().toUpperCase();
+            document.querySelectorAll('.coin-chip').forEach(el => {
+                el.classList.toggle('active', el.innerText === val.replace('USDT', ''));
+            });
+            symbolDebounceTimer = setTimeout(() => {
+                if (val.length >= 2) {
+                    fetchBybitPrice(val);
+                }
+            }, 600);
+            recalc();
+        });
+    }
+
+    // Initial load: automatically pull real live price from Bybit V5
+    fetchBybitPrice('BTCUSDT');
     recalc();
 </script>
 
