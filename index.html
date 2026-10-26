@@ -670,7 +670,7 @@
         </div>
 
         <div class="timing-meta-row">
-            <span>Текущее время: <b id="display-time">2026-10-25 21:57:41 МСК</b></span>
+            <span>Текущее время: <b id="display-time">2026-10-26 19:18:00 UTC</b></span>
             <span>Индекс благоприятности: <b>78/100</b></span>
             <span>Режим макро: <b style="color:var(--accent-green);">ШТАТНЫЙ</b></span>
         </div>
@@ -681,7 +681,7 @@
                 <div class="factor-title">📅 День недели</div>
                 <div class="factor-score">Воскресенье (18/30)</div>
                 <div class="factor-desc">
-                    Вечер воскресенья (18:00-23:59 МСК): подготовка к открытию институциональной недели (Monday Open). Топовые монеты с аккумуляцией китов готовы к раннему импульсу.
+                    Вечер воскресенья (15:00-20:59 UTC): подготовка к открытию институциональной недели (Monday Open 00:00 UTC). Топовые монеты с аккумуляцией китов готовы к раннему импульсу.
                 </div>
             </div>
 
@@ -689,7 +689,7 @@
                 <div class="factor-title">🗓️ Календарь месяца</div>
                 <div class="factor-score">25-е число месяца (26/30)</div>
                 <div class="factor-desc">
-                    <b>Экспирация опционов Deribit.</b> Окно закрытия месячных опционов (последняя пятница месяца). Маркетмейкеры держат цену около Max Pain, после чего начинается ралли.
+                    <b>Экспирация опционов Deribit (08:00 UTC).</b> Окно закрытия месячных опционов (последняя пятница месяца). Маркетмейкеры держат цену около Max Pain, после чего начинается ралли.
                 </div>
             </div>
 
@@ -697,7 +697,7 @@
                 <div class="factor-title">⏰ Торговая сессия</div>
                 <div class="factor-score">Вечернее закрытие США (14/20)</div>
                 <div class="factor-desc">
-                    Завершение американских торгов. Снижение внутридневной волатильности, подготовка к 8-часовому сбросу фандинга.
+                    Завершение американских торгов (18:00-21:00 UTC). Снижение внутридневной волатильности, подготовка к 8-часовому сбросу фандинга (00:00 UTC).
                 </div>
             </div>
 
@@ -726,7 +726,7 @@
                 </li>
                 <li>
                     <span>⏱️</span>
-                    <span><b>Текущее время (21:57 МСК):</b> внутридневная сессия не имеет институционального веса из-за выходных.</span>
+                    <span><b>Текущее время (UTC):</b> внутридневная сессия не имеет институционального веса из-за выходных.</span>
                 </li>
             </ul>
 
@@ -1229,6 +1229,23 @@
             }, 800);
         });
     }
+
+    // Institutional Live UTC Clock
+    function updateUtcClock() {
+        const el = document.getElementById('display-time');
+        if (!el) return;
+        const now = new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+        const y = now.getUTCFullYear();
+        const m = pad(now.getUTCMonth() + 1);
+        const d = pad(now.getUTCDate());
+        const h = pad(now.getUTCHours());
+        const min = pad(now.getUTCMinutes());
+        const s = pad(now.getUTCSeconds());
+        el.innerText = `${y}-${m}-${d} ${h}:${min}:${s} UTC`;
+    }
+    updateUtcClock();
+    setInterval(updateUtcClock, 1000);
 
     // Initial load: automatically pull real live price from Bybit V5
     fetchBybitPrice('BTCUSDT');
