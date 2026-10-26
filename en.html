@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Syndicate | Institutional Timing & Wyckoff Calculator (EN)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #07090e;
+            --bg-card: #0d121d;
+            --bg-card-subtle: #121927;
+            --border-color: #1c2638;
+            --border-highlight: #2a3b57;
+            --accent-green: #00e676;
+            --accent-green-dim: rgba(0, 230, 118, 0.12);
+            --accent-cyan: #00e5ff;
+            --accent-cyan-dim: rgba(0, 229, 255, 0.1);
+            --accent-yellow: #ffb300;
+            --accent-yellow-dim: rgba(255, 179, 0, 0.12);
+            --accent-red: #ff5252;
+            --text-main: #f1f5f9;
+            --text-muted: #8e9bb0;
+            --font-display: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-display);
+            min-height: 100vh;
+            padding: 1.5rem 1rem 3rem 1rem;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 940px;
+            margin: 0 auto;
+        }
+
+        /* Top Brand Bar */
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .brand-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .brand-logo {
+            font-size: 1.75rem;
+            filter: drop-shadow(0 0 12px rgba(0, 229, 255, 0.4));
+        }
+
+        .brand-title h1 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #ffffff, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-title p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            letter-spacing: 0.02em;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .lang-switch {
+            text-decoration: none;
+            color: var(--text-main);
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-color);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            transition: all 0.15s ease;
+        }
+
+        .lang-switch:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .badge-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            color: var(--accent-green);
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            font-weight: 700;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-green);
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* Card Layout */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.75rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--border-highlight), transparent);
+        }
+
+        /* TIMING HERO CARD */
+        .timing-hero {
+            border-color: rgba(0, 230, 118, 0.3);
+            background: linear-gradient(180deg, rgba(0, 230, 118, 0.03) 0%, var(--bg-card) 100%);
+        }
+
+        .timing-hero::before {
+            background: linear-gradient(90deg, transparent, var(--accent-green), transparent);
+        }
+
+        .timing-status-bar {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.25rem;
+        }
+
+        .status-badge-big {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--accent-green-dim);
+            border: 1px solid rgba(0, 230, 118, 0.4);
+            color: var(--accent-green);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+        }
+
+        .timing-headline {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 0.6rem;
+            line-height: 1.35;
+        }
+
+        .timing-lead {
+            font-size: 0.95rem;
+            color: #bbf7d0;
+            font-weight: 600;
+            background: rgba(0, 230, 118, 0.08);
+            border-left: 3px solid var(--accent-green);
+            padding: 0.6rem 0.9rem;
+            border-radius: 0 6px 6px 0;
+            margin-top: 0.75rem;
+        }
+
+        .timing-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 1rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .timing-meta-row span b {
+            color: var(--accent-cyan);
+        }
+
+        /* 4 FACTORS GRID */
+        .factors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .factor-card {
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .factor-card:hover {
+            border-color: var(--border-highlight);
+        }
+
+        .factor-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .factor-score {
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .factor-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-top: 0.2rem;
+        }
+
+        .factor-desc b {
+            color: #e2e8f0;
+        }
+
+        /* WHY STATUS BOX */
+        .why-box {
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .why-header {
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-yellow);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .why-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+        }
+
+        .why-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            line-height: 1.45;
+        }
+
+        .recommendation-banner {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 229, 255, 0.08);
+            border-left: 3px solid var(--accent-cyan);
+            border-radius: 0 6px 6px 0;
+            font-size: 0.85rem;
+            color: #e0f2fe;
+        }
+
+        .recommendation-banner b {
+            color: var(--accent-cyan);
+        }
+
+        /* ==================== CALCULATOR SECTION ==================== */
+        .calc-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .calc-header h2 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #ffffff;
+        }
+
+        .calc-header p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .calc-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .form-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .form-input, .form-select {
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-color);
+            color: #ffffff;
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.65rem 0.85rem;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.15s ease;
+            width: 100%;
+        }
+
+        .form-input:focus, .form-select:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.15);
+        }
+
+        .quick-coins {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-top: 0.4rem;
+        }
+
+        .coin-chip {
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .coin-chip:hover, .coin-chip.active {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            background: var(--accent-cyan-dim);
+        }
+
+        /* Order Ladder Cards */
+        .orders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .order-card {
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .order-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 3px;
+        }
+
+        .order-card.o1::before { background: var(--accent-cyan); }
+        .order-card.o2::before { background: #38bdf8; }
+        .order-card.o3::before { background: #818cf8; }
+
+        .order-tag {
+            font-size: 0.72rem;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.4rem;
+        }
+
+        .order-price {
+            font-family: var(--font-mono);
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 0.6rem;
+        }
+
+        .order-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .order-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-row span.val {
+            font-family: var(--font-mono);
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .val-tp {
+            color: var(--accent-green) !important;
+            font-weight: 700;
+        }
+
+        .val-sl {
+            color: var(--accent-red) !important;
+            font-weight: 700;
+        }
+
+        /* Summary Bar */
+        .summary-bar {
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.1rem 1.25rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .summary-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .summary-val {
+            font-family: var(--font-mono);
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* Textarea and Actions */
+        .output-box {
+            margin-top: 1rem;
+        }
+
+        .order-textarea {
+            width: 100%;
+            background: #060910;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            color: #a5f3fc;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 220px;
+            outline: none;
+            margin-bottom: 1rem;
+        }
+
+        .order-textarea:focus {
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            padding: 0.75rem 1.4rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            border: none;
+            font-family: var(--font-display);
+        }
+
+        .btn-primary {
+            background: var(--accent-cyan);
+            color: #041019;
+            box-shadow: 0 4px 14px rgba(0, 229, 255, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: #22e9ff;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--border-highlight);
+            background: #182235;
+        }
+
+        .btn-tg {
+            background: #229ed9;
+            color: #ffffff;
+        }
+
+        .btn-tg:hover {
+            background: #1e8ec3;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding-top: 2rem;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            margin-top: 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .footer-link {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 1rem 0.75rem 2rem 0.75rem; }
+            .card { padding: 1.25rem; }
+            .factors-grid { grid-template-columns: 1fr; }
+            .calc-form-grid { grid-template-columns: 1fr; }
+            .orders-grid { grid-template-columns: 1fr; }
+            .btn-group { flex-direction: column; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Top Institutional Bar -->
+    <header class="brand-header">
+        <div class="brand-title">
+            <span class="brand-logo">🛡️</span>
+            <div>
+                <h1>MARKET SYNDICATE</h1>
+                <p>QUANTITATIVE WYCKOFF TERMINAL &bull; LEAD MAGNET PROTOTYPE</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="index.html" class="lang-switch">🇷🇺 Русский (RU)</a>
+            <div class="badge-live">
+                <span class="pulse-dot"></span>
+                <span>TIMING RADAR LIVE</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- CARD 1: TIMING HERO (Institutional English) -->
+    <section class="card timing-hero">
+        <div class="timing-status-bar">
+            <div>
+                <div class="status-badge-big">
+                    🟢 GOLDEN ENTRY WINDOW (78/100)
+                </div>
+                <div class="timing-headline">
+                    Optimal Timing: High Institutional Liquidity Window
+                </div>
+            </div>
+        </div>
+
+        <div class="timing-lead">
+            👉 EXCELLENT ENTRY CONDITIONS. Deployment of 3-order Wyckoff limit ladders recommended.
+        </div>
+
+        <div class="timing-meta-row">
+            <span>Current Time: <b id="display-time">2026-10-25 18:57:41 UTC</b></span>
+            <span>Favorability Score: <b>78/100</b></span>
+            <span>Macro Regime: <b style="color:var(--accent-green);">CLEAR (NORMAL)</b></span>
+        </div>
+
+        <!-- 4 Factors Grid -->
+        <div class="factors-grid">
+            <div class="factor-card">
+                <div class="factor-title">📅 Day of Week</div>
+                <div class="factor-score">Sunday (18/30)</div>
+                <div class="factor-desc">
+                    Sunday evening session (15:00-20:59 UTC): positioning for institutional weekly open (Monday Open). Top whale accumulation candidates ready for early impulses.
+                </div>
+            </div>
+
+            <div class="factor-card">
+                <div class="factor-title">🗓️ Monthly Calendar</div>
+                <div class="factor-score">25th of Month (26/30)</div>
+                <div class="factor-desc">
+                    <b>Deribit Options Expiry.</b> Monthly options settlement window (last Friday of month). Market makers anchor price around Max Pain before directional expansion.
+                </div>
+            </div>
+
+            <div class="factor-card">
+                <div class="factor-title">⏰ Trading Session</div>
+                <div class="factor-score">US Evening Close (14/20)</div>
+                <div class="factor-desc">
+                    US market completion. Reduction in intraday churn volatility, preparation for 8-hour funding cycle reset.
+                </div>
+            </div>
+
+            <div class="factor-card">
+                <div class="factor-title">🛡️ Macro Events & Risk</div>
+                <div class="factor-score" style="color:var(--accent-green);">✅ CLEAR REGIME</div>
+                <div class="factor-desc">
+                    Macro background is calm; standard accumulation levels operate without defensive buffer expansions.
+                </div>
+            </div>
+        </div>
+
+        <!-- Why This Status Box -->
+        <div class="why-box">
+            <div class="why-header">
+                <span>💡</span> WHY CURRENT ENTRY STATUS:
+            </div>
+            <ul class="why-list">
+                <li>
+                    <span>✅</span>
+                    <span><b>Scheduled Fed macro shocks absent;</b> market microstructure is stable.</span>
+                </li>
+                <li>
+                    <span>🛑</span>
+                    <span><b>Weekend Session (Sunday):</b> Institutional venues closed, liquidity thinned. Market makers often trigger retail stop cascades.</span>
+                </li>
+                <li>
+                    <span>⏱️</span>
+                    <span><b>Session Timing:</b> Intraday weekend session lacks full institutional volume weight.</span>
+                </li>
+            </ul>
+
+            <div class="recommendation-banner">
+                🎯 <b>Recommended Algorithm Action:</b> Safe placement of limit orders along computed Wyckoff prime entry zones.
+            </div>
+        </div>
+    </section>
+
+    <!-- CARD 2: INTERACTIVE WYCKOFF ORDER CALCULATOR -->
+    <section class="card">
+        <div class="calc-header">
+            <div>
+                <h2>📐 INTERACTIVE WYCKOFF GRID CALCULATOR</h2>
+                <p>Mathematical execution model for safe Bybit V5 limit entries, position sizing, and profit targets</p>
+            </div>
+        </div>
+
+        <!-- Inputs Form -->
+        <div class="calc-form-grid">
+            <div class="form-group">
+                <label class="form-label">Trading Instrument</label>
+                <input type="text" id="symbol-input" class="form-input" value="BTCUSDT" placeholder="BTCUSDT, ETHUSDT...">
+                <div class="quick-coins">
+                    <span class="coin-chip active" onclick="setCoin('BTCUSDT')">BTC</span>
+                    <span class="coin-chip" onclick="setCoin('ETHUSDT')">ETH</span>
+                    <span class="coin-chip" onclick="setCoin('SOLUSDT')">SOL</span>
+                    <span class="coin-chip" onclick="setCoin('TAOUSDT')">TAO</span>
+                    <span class="coin-chip" onclick="setCoin('NEARUSDT')">NEAR</span>
+                    <span class="coin-chip" onclick="setCoin('SUIUSDT')">SUI</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <label class="form-label">Current Price ($ USDT)</label>
+                    <span id="price-status" style="font-size:0.72rem; font-family:var(--font-mono); color:var(--accent-green);">
+                        🟢 Bybit V5 Live
+                    </span>
+                </div>
+                <div style="position:relative; display:flex; align-items:center;">
+                    <input type="number" id="price-input" class="form-input" value="80620.00" step="any" style="padding-right:2.2rem;">
+                    <button type="button" onclick="refreshCurrentPrice()" title="Query live price from Bybit" style="position:absolute; right:8px; background:none; border:none; color:var(--accent-cyan); cursor:pointer; font-size:1.05rem; line-height:1; padding:2px;">🔄</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Trade Margin ($ USDT)</label>
+                <input type="number" id="budget-input" class="form-input" value="100" min="10" step="10">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Leverage (Isolated)</label>
+                <select id="leverage-input" class="form-select">
+                    <option value="1">1x (Spot / Zero Liquidation)</option>
+                    <option value="2">2x (Conservative)</option>
+                    <option value="3" selected>3x (Institutional Standard)</option>
+                    <option value="5">5x (Max Permissible)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Wyckoff Grid Preset</label>
+                <select id="preset-input" class="form-select">
+                    <option value="standard" selected>Standard (-3.5% / -7.0% / -11.2%)</option>
+                    <option value="expanded">Expanded Buffer (-6.0% / -11.2% / -16.5%)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 3 Orders Visual Ladder -->
+        <div class="orders-grid">
+            <!-- Order 1 -->
+            <div class="order-card o1">
+                <div class="order-tag" id="o1-tag">📍 ORDER #1 &bull; 4H OB (-3.5%)</div>
+                <div class="order-price" id="o1-price">$0.00</div>
+                <div class="order-rows">
+                    <div class="order-row">
+                        <span>Quantity:</span>
+                        <span class="val" id="o1-qty">0.00</span>
+                    </div>
+                    <div class="order-row">
+                        <span>Margin:</span>
+                        <span class="val" id="o1-margin">$33.30 (33.3%)</span>
+                    </div>
+                    <div class="order-row">
+                        <span>Take Profit (TP1):</span>
+                        <span class="val val-tp" id="o1-tp">$0.00 (+20%)</span>
+                    </div>
+                    <div class="order-row">
+                        <span>Stop Loss (SL):</span>
+                        <span class="val val-sl" id="o1-sl">$0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order 2 -->
+            <div class="order-card o2">
+                <div class="order-tag" id="o2-tag">⏳ ORDER #2 &bull; 4H FVG (-7.0%)</div>
+                <div class="order-price" id="o2-price">$0.00</div>
+                <div class="order-rows">
+                    <div class="order-row">
+                        <span>Quantity:</span>
+                        <span class="val" id="o2-qty">0.00</span>
+                    </div>
+                    <div class="order-row">
+                        <span>Margin:</span>
+                        <span class="val" id="o2-margin">$33.30 (33.3%)</span>
+                    </div>
+                    <div class="order-row">
+                        <span>Take Profit (TP2):</span>
+                        <span class="val val-tp" id="o2-tp">$0.00 (+30%)</span>
+                    </div>
+                    <div class="order-row">
+                        <span>Stop Loss (SL):</span>
+                        <span class="val val-sl" id="o2-sl">$0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order 3 -->
+            <div class="order-card o3">
+                <div class="order-tag" id="o3-tag">🛡️ ORDER #3 &bull; 1D Wall (-11.2%)</div>
+                <div class="order-price" id="o3-price">$0.00</div>
+                <div class="order-rows">
+                    <div class="order-row">
+                        <span>Quantity:</span>
+                        <span class="val" id="o3-qty">0.00</span>
+                    </div>
+                    <div class="order-row">
+                        <span>Margin:</span>
+                        <span class="val" id="o3-margin">$33.40 (33.4%)</span>
+                    </div>
+                    <div class="order-row">
+                        <span>Take Profit (TP3):</span>
+                        <span class="val val-tp" id="o3-tp">$0.00 (+40%)</span>
+                    </div>
+                    <div class="order-row">
+                        <span>Stop Loss (SL):</span>
+                        <span class="val val-sl" id="o3-sl">$0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Position Summary Bar -->
+        <div class="summary-bar">
+            <div class="summary-item">
+                <span class="summary-label">Weighted Average Entry</span>
+                <span class="summary-val" id="sum-avg-entry" style="color:var(--accent-cyan);">$0.00</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Breakeven Trigger (+10%)</span>
+                <span class="summary-val" id="sum-be">$0.00</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Max Risk on SL Hit</span>
+                <span class="summary-val val-sl" id="sum-sl-risk">-$0.00</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Liquidation Risk</span>
+                <span class="summary-val" style="color:var(--accent-green);">0.00% (Isolated)</span>
+            </div>
+        </div>
+
+        <!-- Ready text for Bybit -->
+        <div class="output-box">
+            <textarea id="order-instructions" class="order-textarea" readonly spellcheck="false"></textarea>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="copyInstructions()">
+                    📋 Copy Ready Bybit Instructions
+                </button>
+                <a href="https://t.me/Bybit_Radar_en" target="_blank" class="btn btn-tg">
+                    ✈️ Telegram Channel EN (@Bybit_Radar_en)
+                </a>
+                <a href="https://t.me/Bybit_Radar_ru" target="_blank" class="btn btn-secondary">
+                    🇷🇺 Telegram Channel RU (@Bybit_Radar_ru)
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>🛡️ Market Syndicate &bull; Institutional Quantitative Architecture &bull; Lead Magnet Prototype</p>
+        <div class="footer-links">
+            <a href="https://t.me/Bybit_Radar_en" target="_blank" class="footer-link">Telegram EN</a>
+            <a href="https://t.me/Bybit_Radar_ru" target="_blank" class="footer-link">Telegram RU</a>
+            <a href="https://scenum.github.io/syndicate-calculator/en.html" class="footer-link">GitHub Live Mirror</a>
+        </div>
+        <div style="margin-top: 0.75rem; font-size: 0.95rem; font-weight: 700; color: #f1f5f9;">
+            ✍️ Author: <a href="https://t.me/ToP_TradingV" target="_blank" style="color: var(--accent-cyan); text-decoration: none;">@ToP_TradingV</a>
+        </div>
+    </footer>
+
+</div>
+
+<script>
+    function formatNum(val) {
+        if (isNaN(val)) return '0.00';
+        if (val >= 1000) return val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        if (val >= 1) return val.toFixed(4);
+        return val.toFixed(6);
+    }
+
+    function formatTokenQty(val) {
+        if (isNaN(val)) return '0.00';
+        if (val >= 100) return val.toFixed(2);
+        if (val >= 1) return val.toFixed(4);
+        return val.toFixed(6);
+    }
+
+    let livePriceAbortController = null;
+    let symbolDebounceTimer = null;
+
+    async function fetchBybitPrice(symbol) {
+        const priceStatus = document.getElementById('price-status');
+        if (priceStatus) {
+            priceStatus.innerHTML = '<span style="color:var(--accent-yellow);">⏳ Querying Bybit V5...</span>';
+        }
+        try {
+            if (livePriceAbortController) {
+                livePriceAbortController.abort();
+            }
+            livePriceAbortController = new AbortController();
+            const cleanSym = symbol.toUpperCase().trim();
+            const querySym = cleanSym.endsWith('USDT') ? cleanSym : (cleanSym + 'USDT');
+            const url = `https://api.bybit.com/v5/market/tickers?category=linear&symbol=${encodeURIComponent(querySym)}`;
+            const res = await fetch(url, { signal: livePriceAbortController.signal });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const data = await res.json();
+            if (data.retCode === 0 && data.result && data.result.list && data.result.list.length > 0) {
+                const ticker = data.result.list[0];
+                const livePrice = parseFloat(ticker.lastPrice);
+                if (!isNaN(livePrice) && livePrice > 0) {
+                    document.getElementById('price-input').value = livePrice;
+                    if (priceStatus) {
+                        priceStatus.innerHTML = `<span style="color:var(--accent-green);">🟢 Bybit Live: $${formatNum(livePrice)}</span>`;
+                    }
+                    recalc();
+                    return;
+                }
+            }
+            if (priceStatus) {
+                priceStatus.innerHTML = `<span style="color:var(--text-muted);">Manual Price Input</span>`;
+            }
+        } catch (e) {
+            if (e.name !== 'AbortError') {
+                if (priceStatus) {
+                    priceStatus.innerHTML = `<span style="color:var(--text-muted);">Manual Price Input</span>`;
+                }
+            }
+        }
+    }
+
+    function setCoin(symbol) {
+        document.getElementById('symbol-input').value = symbol;
+        
+        document.querySelectorAll('.coin-chip').forEach(el => {
+            el.classList.toggle('active', el.innerText === symbol.replace('USDT', ''));
+        });
+        
+        fetchBybitPrice(symbol);
+    }
+
+    function refreshCurrentPrice() {
+        const symbol = (document.getElementById('symbol-input').value || 'BTCUSDT').toUpperCase().trim();
+        fetchBybitPrice(symbol);
+    }
+
+    function recalc() {
+        const symbol = (document.getElementById('symbol-input').value || 'BTCUSDT').toUpperCase().trim();
+        const price = parseFloat(document.getElementById('price-input').value) || 100;
+        const budget = parseFloat(document.getElementById('budget-input').value) || 100;
+        const leverage = parseFloat(document.getElementById('leverage-input').value) || 3;
+        const preset = document.getElementById('preset-input').value;
+        const token = symbol.replace('USDT', '');
+
+        const isExpanded = (preset === 'expanded');
+
+        // Order Margin breakdown 33.3% / 33.3% / 33.4%
+        const m1 = Math.round(budget * 0.333 * 100) / 100;
+        const m2 = Math.round(budget * 0.333 * 100) / 100;
+        const m3 = Math.round((budget - m1 - m2) * 100) / 100;
+
+        // Ladder price levels
+        const p1 = isExpanded ? (price * 0.940) : (price * 0.965);
+        const p2 = isExpanded ? (p1 * 0.945) : (p1 * 0.964);
+        const p3 = isExpanded ? (p2 * 0.940) : (p2 * 0.955);
+        const sl = isExpanded ? (p3 * 0.910) : (p3 * 0.940);
+
+        const tp1 = p1 * 1.200;
+        const tp2 = p2 * 1.300;
+        const tp3 = p1 * 1.400;
+
+        // Position quantities
+        const q1 = (m1 * leverage) / p1;
+        const q2 = (m2 * leverage) / p2;
+        const q3 = (m3 * leverage) / p3;
+        const totalQty = q1 + q2 + q3;
+
+        // Weighted Average Entry
+        const totalCost = (p1 * q1) + (p2 * q2) + (p3 * q3);
+        const avgEntry = totalCost / totalQty;
+        const beTrigger = avgEntry * 1.10; // +10% moves SL to BE
+
+        // Risk on SL
+        const maxLoss = ((avgEntry - sl) * totalQty);
+
+        // Update UI Cards
+        document.getElementById('o1-tag').innerText = isExpanded ? '📍 ORDER #1 • 4H OB Deep (-6.0%)' : '📍 ORDER #1 • 4H OB (-3.5%)';
+        document.getElementById('o1-price').innerText = '$' + formatNum(p1);
+        document.getElementById('o1-qty').innerText = formatTokenQty(q1) + ' ' + token;
+        document.getElementById('o1-margin').innerText = '$' + m1.toFixed(2) + ' (33.3%)';
+        document.getElementById('o1-tp').innerText = '$' + formatNum(tp1) + ' (+20%)';
+        document.getElementById('o1-sl').innerText = '$' + formatNum(sl);
+
+        document.getElementById('o2-tag').innerText = isExpanded ? '⏳ ORDER #2 • 4H FVG Deep (-11.2%)' : '⏳ ORDER #2 • 4H FVG (-7.0%)';
+        document.getElementById('o2-price').innerText = '$' + formatNum(p2);
+        document.getElementById('o2-qty').innerText = formatTokenQty(q2) + ' ' + token;
+        document.getElementById('o2-margin').innerText = '$' + m2.toFixed(2) + ' (33.3%)';
+        document.getElementById('o2-tp').innerText = '$' + formatNum(tp2) + ' (+30%)';
+        document.getElementById('o2-sl').innerText = '$' + formatNum(sl);
+
+        document.getElementById('o3-tag').innerText = isExpanded ? '🛡️ ORDER #3 • 1D Flush Support (-16.5%)' : '🛡️ ORDER #3 • 1D Major Support (-11.2%)';
+        document.getElementById('o3-price').innerText = '$' + formatNum(p3);
+        document.getElementById('o3-qty').innerText = formatTokenQty(q3) + ' ' + token;
+        document.getElementById('o3-margin').innerText = '$' + m3.toFixed(2) + ' (33.4%)';
+        document.getElementById('o3-tp').innerText = '$' + formatNum(tp3) + ' (+40%)';
+        document.getElementById('o3-sl').innerText = '$' + formatNum(sl);
+
+        // Summary Bar
+        document.getElementById('sum-avg-entry').innerText = '$' + formatNum(avgEntry);
+        document.getElementById('sum-be').innerText = '$' + formatNum(beTrigger);
+        document.getElementById('sum-sl-risk').innerText = '-$' + maxLoss.toFixed(2) + ' (' + ((maxLoss / budget) * 100).toFixed(1) + '%)';
+
+        // Full Bybit instruction text
+        const tagLine = isExpanded ? 'Expanded Defensive Buffer (Weekend / Macro)' : 'Standard Institutional Accumulation Ladder';
+        const txt = `🎯 BYBIT WYCKOFF GRID EXECUTION ORDER FOR ${symbol}\n` +
+            `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+            `📊 Trade Setup: ${leverage}x Isolated Leverage | Margin: $${budget} USDT\n` +
+            `🏷️ Execution Model: ${tagLine}\n` +
+            `💵 Reference Market Price: $${formatNum(price)}\n\n` +
+            `📍 ORDER #1 (${isExpanded ? '4H OB Deep -6.0%' : '4H OB Accumulation -3.5%'}):\n` +
+            `  • Type: Buy Limit Order\n` +
+            `  • Limit Price: $${formatNum(p1)}\n` +
+            `  • Size: ${formatTokenQty(q1)} ${token} (Margin ~$${m1.toFixed(2)} USDT)\n` +
+            `  • Take Profit 1 (+20%): $${formatNum(tp1)}\n` +
+            `  • Stop Loss: $${formatNum(sl)}\n\n` +
+            `⏳ ORDER #2 (${isExpanded ? '4H FVG Deep -11.2%' : '4H FVG Liquidity Sweep -7.0%'}):\n` +
+            `  • Type: Buy Limit Order\n` +
+            `  • Limit Price: $${formatNum(p2)}\n` +
+            `  • Size: ${formatTokenQty(q2)} ${token} (Margin ~$${m2.toFixed(2)} USDT)\n` +
+            `  • Take Profit 2 (+30%): $${formatNum(tp2)}\n` +
+            `  • Stop Loss: $${formatNum(sl)}\n\n` +
+            `🛡️ ORDER #3 (${isExpanded ? '1D Flush Support -16.5%' : '1D Major Support -11.2%'}):\n` +
+            `  • Type: Buy Limit Order\n` +
+            `  • Limit Price: $${formatNum(p3)}\n` +
+            `  • Size: ${formatTokenQty(q3)} ${token} (Margin ~$${m3.toFixed(2)} USDT)\n` +
+            `  • Take Profit 3 (+40%): $${formatNum(tp3)}\n` +
+            `  • Stop Loss: $${formatNum(sl)}\n\n` +
+            `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+            `📐 Weighted Average Entry (if all 3 fill): $${formatNum(avgEntry)}\n` +
+            `⚡️ Move to Breakeven: when price reaches $${formatNum(beTrigger)} (+10% from entry), shift Stop Loss to $${formatNum(avgEntry)}\n` +
+            `🛡️ Deposit Protection: Liquidation risk 0% under 3x isolated margin and strict SL.\n\n` +
+            `✍️ Author: @ToP_TradingV`;
+
+        document.getElementById('order-instructions').value = txt;
+    }
+
+    function copyInstructions() {
+        const el = document.getElementById('order-instructions');
+        el.select();
+        document.execCommand('copy');
+        alert('✅ Bybit instruction copied to clipboard!');
+    }
+
+    // Event listeners
+    ['budget-input', 'leverage-input', 'preset-input'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', recalc);
+            el.addEventListener('change', recalc);
+        }
+    });
+
+    const priceInputEl = document.getElementById('price-input');
+    if (priceInputEl) {
+        priceInputEl.addEventListener('input', () => {
+            const priceStatus = document.getElementById('price-status');
+            if (priceStatus) {
+                priceStatus.innerHTML = `<span style="color:var(--accent-cyan);">✍️ Manual Mode</span>`;
+            }
+            recalc();
+        });
+    }
+
+    const symbolInputEl = document.getElementById('symbol-input');
+    if (symbolInputEl) {
+        symbolInputEl.addEventListener('input', () => {
+            clearTimeout(symbolDebounceTimer);
+            const val = symbolInputEl.value.trim().toUpperCase();
+            document.querySelectorAll('.coin-chip').forEach(el => {
+                el.classList.toggle('active', el.innerText === val.replace('USDT', ''));
+            });
+            symbolDebounceTimer = setTimeout(() => {
+                if (val.length >= 2) {
+                    fetchBybitPrice(val);
+                }
+            }, 600);
+            recalc();
+        });
+    }
+
+    // Initial load: automatically pull real live price from Bybit V5
+    fetchBybitPrice('BTCUSDT');
+    recalc();
+</script>
+
+</body>
+</html>
