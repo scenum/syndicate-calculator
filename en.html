@@ -679,22 +679,22 @@
     <section class="card timing-hero">
         <div class="timing-status-bar">
             <div>
-                <div class="status-badge-big">
+                <div class="status-badge-big" id="timing-status-badge">
                     🟢 GOLDEN ENTRY WINDOW (78/100)
                 </div>
-                <div class="timing-headline">
+                <div class="timing-headline" id="timing-headline">
                     Optimal Timing: High Institutional Liquidity Window
                 </div>
             </div>
         </div>
 
-        <div class="timing-lead">
+        <div class="timing-lead" id="timing-lead">
             👉 EXCELLENT ENTRY CONDITIONS. Deployment of 3-order Wyckoff limit ladders recommended.
         </div>
 
         <div class="timing-meta-row">
-            <span>Current Time: <b id="display-time">2026-10-25 18:57:41 UTC</b></span>
-            <span>Favorability Score: <b>78/100</b></span>
+            <span>Current Time: <b id="display-time">2026-10-26 19:28:00 UTC</b></span>
+            <span>Favorability Score: <b id="timing-index-score">78/100</b></span>
             <span>Macro Regime: <b style="color:var(--accent-green);">CLEAR (NORMAL)</b></span>
         </div>
 
@@ -702,25 +702,25 @@
         <div class="factors-grid">
             <div class="factor-card">
                 <div class="factor-title">📅 Day of Week</div>
-                <div class="factor-score">Sunday (18/30)</div>
-                <div class="factor-desc">
-                    Sunday evening session (15:00-20:59 UTC): positioning for institutional weekly open (Monday Open). Top whale accumulation candidates ready for early impulses.
+                <div class="factor-score" id="factor-day-score">Monday (22/30)</div>
+                <div class="factor-desc" id="factor-day-desc">
+                    Monday: formation of weekly institutional range (Monday High/Low). Safe limit grids absorb opening volatility.
                 </div>
             </div>
 
             <div class="factor-card">
                 <div class="factor-title">🗓️ Monthly Calendar</div>
-                <div class="factor-score">25th of Month (26/30)</div>
-                <div class="factor-desc">
-                    <b>Deribit Options Expiry.</b> Monthly options settlement window (last Friday of month). Market makers anchor price around Max Pain before directional expansion.
+                <div class="factor-score" id="factor-month-score">26th of Month (26/30)</div>
+                <div class="factor-desc" id="factor-month-desc">
+                    <b>Deribit Options Expiry.</b> Monthly options settlement window. Market makers anchor price around Max Pain before directional expansion.
                 </div>
             </div>
 
             <div class="factor-card">
                 <div class="factor-title">⏰ Trading Session</div>
-                <div class="factor-score">US Evening Close (14/20)</div>
-                <div class="factor-desc">
-                    US market completion. Reduction in intraday churn volatility, preparation for 8-hour funding cycle reset.
+                <div class="factor-score" id="factor-session-score">US Evening Close (15/20)</div>
+                <div class="factor-desc" id="factor-session-desc">
+                    US market completion. Reduction in churn volatility, preparation for 8-hour funding cycle reset (00:00 UTC).
                 </div>
             </div>
 
@@ -738,22 +738,22 @@
             <div class="why-header">
                 <span>💡</span> WHY CURRENT ENTRY STATUS:
             </div>
-            <ul class="why-list">
+            <ul class="why-list" id="timing-why-list">
                 <li>
                     <span>✅</span>
                     <span><b>Scheduled Fed macro shocks absent;</b> market microstructure is stable.</span>
                 </li>
                 <li>
-                    <span>🛑</span>
-                    <span><b>Weekend Session (Sunday):</b> Institutional venues closed, liquidity thinned. Market makers often trigger retail stop cascades.</span>
+                    <span>⚡</span>
+                    <span><b>Monday Session:</b> Weekly range formation (Monday Range). Positioning ahead of institutional Tuesday expansion.</span>
                 </li>
                 <li>
                     <span>⏱️</span>
-                    <span><b>Session Timing:</b> Intraday weekend session lacks full institutional volume weight.</span>
+                    <span><b>Session Timing:</b> US evening close, preparation for 8-hour funding reset at 00:00 UTC.</span>
                 </li>
             </ul>
 
-            <div class="recommendation-banner">
+            <div class="recommendation-banner" id="timing-rec-banner">
                 🎯 <b>Recommended Algorithm Action:</b> Safe placement of limit orders along computed Wyckoff prime entry zones.
             </div>
         </div>
@@ -1253,6 +1253,184 @@
         });
     }
 
+    // Dynamic Institutional Timing Calculation
+    function updateMarketTimingWindow() {
+        const now = new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+        const utcDay = now.getUTCDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+        const utcDate = now.getUTCDate();
+        const utcHours = now.getUTCHours();
+        const utcMins = now.getUTCMinutes();
+        const timeMin = utcHours * 60 + utcMins;
+
+        // 1. Day of Week
+        let dayScore = 20;
+        let dayTitle = "";
+        let dayDesc = "";
+        let dayReason = "";
+
+        switch(utcDay) {
+            case 1: // Monday
+                dayScore = 22;
+                dayTitle = `Monday (${dayScore}/30)`;
+                dayDesc = "Monday: formation of weekly institutional range (Monday High/Low). Limit grids absorb opening volatility cascades and prepare positioning for Tuesday.";
+                dayReason = "<b>Monday Session:</b> Weekly range formation (Monday Range). Safe limit grids absorb opening volatility.";
+                break;
+            case 2: // Tuesday
+                dayScore = 30;
+                dayTitle = `Tuesday (${dayScore}/30) 💎`;
+                dayDesc = "Golden Day of the Week: weekly high/low set, maximum institutional volume inflow, highest precision on Wyckoff ladder fills.";
+                dayReason = "<b>Golden Day (Tuesday):</b> Maximum order book density and institutional liquidity inflow.";
+                break;
+            case 3: // Wednesday
+                dayScore = 30;
+                dayTitle = `Wednesday (${dayScore}/30) 💎`;
+                dayDesc = "Golden Day of the Week: weekly trend expansion phase. Peak derivatives liquidity across Bybit and Binance.";
+                dayReason = "<b>Golden Day (Wednesday):</b> Peak weekly market liquidity and reliable Wyckoff ladder execution.";
+                break;
+            case 4: // Thursday
+                if (utcHours >= 17) {
+                    dayScore = 16;
+                    dayTitle = `Thursday (Evening) (${dayScore}/30)`;
+                    dayDesc = "Thursday evening: pre-Friday de-risking before options settlement. Heightened stop cascade risk.";
+                    dayReason = "<b>Thursday Evening:</b> Pre-Friday repositioning ahead of options expiry.";
+                } else {
+                    dayScore = 24;
+                    dayTitle = `Thursday (${dayScore}/30)`;
+                    dayDesc = "Thursday: trend continuation day. High volume institutional activity ahead of the weekly close.";
+                    dayReason = "<b>Thursday Session:</b> Strong trend continuation, optimal limit entries.";
+                }
+                break;
+            case 5: // Friday
+                dayScore = 14;
+                dayTitle = `Friday (${dayScore}/30)`;
+                dayDesc = "Friday: profit taking by weekly funds and Deribit options expiry at 08:00 UTC. Heightened volatility.";
+                dayReason = "<b>Friday Session:</b> Fund profit-taking before weekend and CME futures close.";
+                break;
+            case 6: // Saturday
+                dayScore = 8;
+                dayTitle = `Saturday (${dayScore}/30)`;
+                dayDesc = "Weekend session: thin retail liquidity, institutional market makers closed. Risk of fakeouts.";
+                dayReason = "<b>Weekend Session (Saturday):</b> Institutional desks closed, reduced volume.";
+                break;
+            case 0: // Sunday
+                if (utcHours >= 15) {
+                    dayScore = 18;
+                    dayTitle = `Sunday (Evening) (${dayScore}/30)`;
+                    dayDesc = "Sunday evening (15:00-23:59 UTC): positioning for institutional weekly open (Monday Open 00:00 UTC). Top whale accumulation candidates ready for early impulses.";
+                    dayReason = "<b>Sunday Evening:</b> Institutional positioning ahead of Monday Open.";
+                } else {
+                    dayScore = 8;
+                    dayTitle = `Sunday (${dayScore}/30)`;
+                    dayDesc = "Weekend session: thin order books, institutions offline. Only pre-calculated limit grids recommended.";
+                    dayReason = "<b>Weekend Session (Sunday):</b> Thin retail market, institutional venues offline.";
+                }
+                break;
+        }
+
+        // 2. Day of Month
+        let monthScore = 22;
+        let monthTitle = `${utcDate}${utcDate === 1 ? 'st' : (utcDate === 2 ? 'nd' : (utcDate === 3 ? 'rd' : 'th'))} of Month`;
+        let monthDesc = "";
+        if (utcDate >= 24 && utcDate <= 28) {
+            monthScore = 26;
+            monthTitle += ` (${monthScore}/30)`;
+            monthDesc = "<b>Deribit Options Expiry (08:00 UTC).</b> Monthly options settlement window. Market makers anchor price near Max Pain before directional expansion.";
+        } else if (utcDate >= 10 && utcDate <= 14) {
+            monthScore = 15;
+            monthTitle += ` (${monthScore}/30)`;
+            monthDesc = "<b>US Macro Shock Window (CPI / Inflation).</b> Elevated news volatility. Deep limit ladder spacing recommended.";
+        } else if (utcDate >= 1 && utcDate <= 4) {
+            monthScore = 20;
+            monthTitle += ` (${monthScore}/30)`;
+            monthDesc = "<b>Month Open & NFP Release.</b> Inflow of fresh capital allocations after monthly book closure.";
+        } else {
+            monthScore = 24;
+            monthTitle += ` (${monthScore}/30)`;
+            monthDesc = "<b>Standard Calendar Cycle.</b> Stable liquidity distribution free of options Max Pain distortions and macro shocks.";
+        }
+
+        // 3. Trading Session
+        let sessionScore = 14;
+        let sessionTitle = "";
+        let sessionDesc = "";
+        let sessionReason = "";
+
+        if (timeMin >= 13 * 60 + 30 && timeMin <= 20 * 60) { // 13:30 - 20:00 UTC
+            sessionScore = 20;
+            sessionTitle = `US Session (New York / Wall St) (${sessionScore}/20)`;
+            sessionDesc = "Peak global liquidity! Wall Street and spot ETF funds operating. Prime timing for genuine Wyckoff momentum.";
+            sessionReason = `⚡ <b>US Peak Session (${pad(utcHours)}:${pad(utcMins)} UTC):</b> Maximum order book depth and volume confirmation.`;
+        } else if (timeMin >= 8 * 60 && timeMin < 13 * 60 + 30) { // 08:00 - 13:30 UTC
+            sessionScore = 18;
+            sessionTitle = `European Session (London) (${sessionScore}/20)`;
+            sessionDesc = "London bank opening. Inflow of European liquidity, Judas Swing hunting Asian extremes.";
+            sessionReason = `⚡ <b>London Session (${pad(utcHours)}:${pad(utcMins)} UTC):</b> European interbank liquidity inflow.`;
+        } else if (timeMin >= 20 * 60 && timeMin <= 23 * 60 + 59) { // 20:00 - 23:59 UTC
+            sessionScore = 15;
+            sessionTitle = `US Evening Close / Handover (${sessionScore}/20)`;
+            sessionDesc = "US market completion (18:00-21:00 UTC). Reduction in churn, preparation for 8-hour funding reset (00:00 UTC).";
+            sessionReason = `⏱️ <b>Session Timing (${pad(utcHours)}:${pad(utcMins)} UTC):</b> US evening close, preparation for 8h funding reset at 00:00 UTC.`;
+        } else { // 00:00 - 08:00 UTC
+            sessionScore = 15;
+            sessionTitle = `Asian Session (Tokyo / Singapore) (${sessionScore}/20)`;
+            sessionDesc = "Asian overnight range. Thin night books cleanly fill deep limit accumulation orders 2 and 3.";
+            sessionReason = `🌙 <b>Asian Session (${pad(utcHours)}:${pad(utcMins)} UTC):</b> Formation of primary daily range (Asian Range).`;
+        }
+
+        // 4. Macro & Total Score
+        const macroScore = 20;
+        let totalScore = dayScore + monthScore + sessionScore + macroScore;
+        if (totalScore > 100) totalScore = 100;
+
+        // Update DOM elements
+        const badgeEl = document.getElementById('timing-status-badge');
+        const headlineEl = document.getElementById('timing-headline');
+        const leadEl = document.getElementById('timing-lead');
+        const scoreEl = document.getElementById('timing-index-score');
+        const dayScoreEl = document.getElementById('factor-day-score');
+        const dayDescEl = document.getElementById('factor-day-desc');
+        const monthScoreEl = document.getElementById('factor-month-score');
+        const monthDescEl = document.getElementById('factor-month-desc');
+        const sessionScoreEl = document.getElementById('factor-session-score');
+        const sessionDescEl = document.getElementById('factor-session-desc');
+        const whyListEl = document.getElementById('timing-why-list');
+
+        if (scoreEl) scoreEl.innerText = `${totalScore}/100`;
+
+        if (badgeEl && headlineEl && leadEl) {
+            if (totalScore >= 75) {
+                badgeEl.innerText = `🟢 GOLDEN ENTRY WINDOW (${totalScore}/100)`;
+                headlineEl.innerText = "Optimal Timing: High Institutional Liquidity Window";
+                leadEl.innerText = "👉 EXCELLENT ENTRY CONDITIONS. Deployment of 3-order Wyckoff limit ladders recommended.";
+            } else if (totalScore >= 60) {
+                badgeEl.innerText = `🟡 FAVORABLE TIMING (${totalScore}/100)`;
+                headlineEl.innerText = "Moderate Institutional Liquidity Window";
+                leadEl.innerText = "👉 MODERATE REGIME. Safe deployment of limit orders with standard risk buffers.";
+            } else {
+                badgeEl.innerText = `🔴 ELEVATED RISK (${totalScore}/100)`;
+                headlineEl.innerText = "Thin Market or Transition Phase";
+                leadEl.innerText = "👉 ELEVATED VOLATILITY. Strict placement of deep limit buffers to prevent cascade fills.";
+            }
+        }
+
+        if (dayScoreEl) dayScoreEl.innerText = dayTitle;
+        if (dayDescEl) dayDescEl.innerText = dayDesc;
+        if (monthScoreEl) monthScoreEl.innerHTML = monthTitle;
+        if (monthDescEl) monthDescEl.innerHTML = monthDesc;
+        if (sessionScoreEl) sessionScoreEl.innerText = sessionTitle;
+        if (sessionDescEl) sessionDescEl.innerText = sessionDesc;
+
+        if (whyListEl) {
+            const dayIcon = utcDay in {1:1, 4:1} ? '⚡' : (utcDay in {2:1, 3:1} ? '💎' : '🛑');
+            whyListEl.innerHTML = `
+                <li><span>✅</span><span><b>Scheduled Fed macro shocks absent;</b> market microstructure is stable.</span></li>
+                <li><span>${dayIcon}</span><span>${dayReason}</span></li>
+                <li><span>${timeMin < 8*60 ? '🌙' : '⏱️'}</span><span>${sessionReason}</span></li>
+            `;
+        }
+    }
+
     // Institutional Live UTC Clock
     function updateUtcClock() {
         const el = document.getElementById('display-time');
@@ -1268,7 +1446,9 @@
         el.innerText = `${y}-${m}-${d} ${h}:${min}:${s} UTC`;
     }
     updateUtcClock();
+    updateMarketTimingWindow();
     setInterval(updateUtcClock, 1000);
+    setInterval(updateMarketTimingWindow, 30000);
 
     // Initial load: automatically pull real live price from Bybit V5
     fetchBybitPrice('BTCUSDT');

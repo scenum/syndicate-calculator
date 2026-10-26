@@ -652,26 +652,26 @@
         </div>
     </header>
 
-    <!-- CARD 1: TIMING HERO (Exact text verbatim as requested) -->
+    <!-- CARD 1: TIMING HERO (Dynamic Real-Time Institutional Window) -->
     <section class="card timing-hero">
         <div class="timing-status-bar">
             <div>
-                <div class="status-badge-big">
+                <div class="status-badge-big" id="timing-status-badge">
                     🟢 ЗОЛОТОЕ ОКНО ДЛЯ ВХОДА (78/100)
                 </div>
-                <div class="timing-headline">
+                <div class="timing-headline" id="timing-headline">
                     Идеальное время: Высокая институциональная ликвидность
                 </div>
             </div>
         </div>
 
-        <div class="timing-lead">
+        <div class="timing-lead" id="timing-lead">
             👉 ОТЛИЧНЫЙ МОМЕНТ ДЛЯ ВХОДА. Рекомендуется выставление 3-ордерных сеток по стратегии Вайкоффа.
         </div>
 
         <div class="timing-meta-row">
-            <span>Текущее время: <b id="display-time">2026-10-26 19:18:00 UTC</b></span>
-            <span>Индекс благоприятности: <b>78/100</b></span>
+            <span>Текущее время: <b id="display-time">2026-10-26 19:28:00 UTC</b></span>
+            <span>Индекс благоприятности: <b id="timing-index-score">78/100</b></span>
             <span>Режим макро: <b style="color:var(--accent-green);">ШТАТНЫЙ</b></span>
         </div>
 
@@ -679,25 +679,25 @@
         <div class="factors-grid">
             <div class="factor-card">
                 <div class="factor-title">📅 День недели</div>
-                <div class="factor-score">Воскресенье (18/30)</div>
-                <div class="factor-desc">
-                    Вечер воскресенья (15:00-20:59 UTC): подготовка к открытию институциональной недели (Monday Open 00:00 UTC). Топовые монеты с аккумуляцией китов готовы к раннему импульсу.
+                <div class="factor-score" id="factor-day-score">Понедельник (22/30)</div>
+                <div class="factor-desc" id="factor-day-desc">
+                    Понедельник: формирование диапазона недели (Monday Range High/Low). Лимитные сетки защищают от ложных выносов открытия.
                 </div>
             </div>
 
             <div class="factor-card">
                 <div class="factor-title">🗓️ Календарь месяца</div>
-                <div class="factor-score">25-е число месяца (26/30)</div>
-                <div class="factor-desc">
-                    <b>Экспирация опционов Deribit (08:00 UTC).</b> Окно закрытия месячных опционов (последняя пятница месяца). Маркетмейкеры держат цену около Max Pain, после чего начинается ралли.
+                <div class="factor-score" id="factor-month-score">26-е число месяца (26/30)</div>
+                <div class="factor-desc" id="factor-month-desc">
+                    <b>Экспирация опционов Deribit (08:00 UTC).</b> Окно закрытия месячных опционов. Маркетмейкеры держат цену около Max Pain, после чего начинается импульс.
                 </div>
             </div>
 
             <div class="factor-card">
                 <div class="factor-title">⏰ Торговая сессия</div>
-                <div class="factor-score">Вечернее закрытие США (14/20)</div>
-                <div class="factor-desc">
-                    Завершение американских торгов (18:00-21:00 UTC). Снижение внутридневной волатильности, подготовка к 8-часовому сбросу фандинга (00:00 UTC).
+                <div class="factor-score" id="factor-session-score">Вечернее закрытие США (15/20)</div>
+                <div class="factor-desc" id="factor-session-desc">
+                    Завершение американских торгов (18:00-21:00 UTC). Снижение волатильности, подготовка к 8-часовому сбросу фандинга (00:00 UTC).
                 </div>
             </div>
 
@@ -715,22 +715,22 @@
             <div class="why-header">
                 <span>💡</span> ПОЧЕМУ СЕЙЧАС ТАКОЙ СТАТУС ДЛЯ ВХОДА:
             </div>
-            <ul class="why-list">
+            <ul class="why-list" id="timing-why-list">
                 <li>
                     <span>✅</span>
                     <span><b>Плановые макрошоки ФРС отсутствуют;</b> рыночная структура стабильна.</span>
                 </li>
                 <li>
-                    <span>🛑</span>
-                    <span><b>Выходной день (Воскресенье):</b> институциональные биржи закрыты, объемы снижены. На выходных маркетмейкеры часто устраивают сборы стопов розничных трейдеров.</span>
+                    <span>⚡</span>
+                    <span><b>Понедельник:</b> завершение формирования диапазона недели (Monday Range). Аккумуляция перед институциональным вторником.</span>
                 </li>
                 <li>
                     <span>⏱️</span>
-                    <span><b>Текущее время (UTC):</b> внутридневная сессия не имеет институционального веса из-за выходных.</span>
+                    <span><b>Текущее время (UTC):</b> закрытие американской сессии, подготовка к 8-часовому сбросу фандинга (00:00 UTC).</span>
                 </li>
             </ul>
 
-            <div class="recommendation-banner">
+            <div class="recommendation-banner" id="timing-rec-banner">
                 🎯 <b>Рекомендованное действие алгоритма:</b> Безопасное размещение лимитных ордеров по рассчитанным зонам входа Prime-кандидатов.
             </div>
         </div>
@@ -1230,6 +1230,184 @@
         });
     }
 
+    // Dynamic Institutional Timing Calculation
+    function updateMarketTimingWindow() {
+        const now = new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+        const utcDay = now.getUTCDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+        const utcDate = now.getUTCDate();
+        const utcHours = now.getUTCHours();
+        const utcMins = now.getUTCMinutes();
+        const timeMin = utcHours * 60 + utcMins;
+
+        // 1. Day of Week
+        let dayScore = 20;
+        let dayTitle = "";
+        let dayDesc = "";
+        let dayReason = "";
+
+        switch(utcDay) {
+            case 1: // Monday
+                dayScore = 22;
+                dayTitle = `Понедельник (${dayScore}/30)`;
+                dayDesc = "Понедельник: формирование институционального диапазона недели (Monday Range High/Low). Лимитные сетки защищают от утренних ложных выносов и готовят позицию к импульсам вторника.";
+                dayReason = "<b>Понедельник:</b> формирование диапазона недели (Monday Range). Лимитные сетки защищают от манипуляций открытия.";
+                break;
+            case 2: // Tuesday
+                dayScore = 30;
+                dayTitle = `Вторник (${dayScore}/30) 💎`;
+                dayDesc = "Золотой день недели: минимум/максимум недели сформирован, приток максимального институционального объема, высокая точность отработки сеток Вайкоффа.";
+                dayReason = "<b>Золотой день недели (Вторник):</b> максимальная плотность стаканов и приток институциональных объемов.";
+                break;
+            case 3: // Wednesday
+                dayScore = 30;
+                dayTitle = `Среда (${dayScore}/30) 💎`;
+                dayDesc = "Золотой день недели: продолжение основного тренда недели. Максимальная ликвидность на биржах деривативов Bybit/Binance.";
+                dayReason = "<b>Золотой день недели (Среда):</b> пик недельной ликвидности и стабильная отработка лимитных уровней.";
+                break;
+            case 4: // Thursday
+                if (utcHours >= 17) {
+                    dayScore = 16;
+                    dayTitle = `Четверг (Вечер) (${dayScore}/30)`;
+                    dayDesc = "Вечер четверга: предпятничный сброс позиций перед экспирацией опционов. Повышенный риск срыва стопов.";
+                    dayReason = "<b>Вечер четверга:</b> предпятничные манипуляции перед закрытием опционов.";
+                } else {
+                    dayScore = 24;
+                    dayTitle = `Четверг (${dayScore}/30)`;
+                    dayDesc = "Четверг: день продолжения импульса. Активные институциональные торги перед финалом недели.";
+                    dayReason = "<b>Четверг:</b> трендовый день, безопасный вход по лимитным уровням.";
+                }
+                break;
+            case 5: // Friday
+                dayScore = 14;
+                dayTitle = `Пятница (${dayScore}/30)`;
+                dayDesc = "Пятница: фиксация позиций недельными фондами и экспирация опционов Deribit в 08:00 UTC. Высокая вероятность резких сквизов.";
+                dayReason = "<b>Пятница:</b> фиксация позиций перед выходными и закрытием CME фьючерсов.";
+                break;
+            case 6: // Saturday
+                dayScore = 8;
+                dayTitle = `Суббота (${dayScore}/30)`;
+                dayDesc = "Выходные дни: тонкий розничный стакан, институциональные маркетмейкеры закрыты. Риск ложных пробоев.";
+                dayReason = "<b>Выходной день (Суббота):</b> институциональные биржи закрыты, объемы снижены.";
+                break;
+            case 0: // Sunday
+                if (utcHours >= 15) {
+                    dayScore = 18;
+                    dayTitle = `Воскресенье (Вечер) (${dayScore}/30)`;
+                    dayDesc = "Вечер воскресенья (15:00-23:59 UTC): позиционирование перед открытием институциональной недели (Monday Open 00:00 UTC). Топовые монеты с аккумуляцией китов готовы к раннему импульсу.";
+                    dayReason = "<b>Вечер воскресенья:</b> подготовка к открытию институциональной недели (Monday Open).";
+                } else {
+                    dayScore = 8;
+                    dayTitle = `Воскресенье (${dayScore}/30)`;
+                    dayDesc = "Выходной день: тонкий рынок, институциональные биржи закрыты. Торговля только по расчетным лимитным уровням.";
+                    dayReason = "<b>Выходной день (Воскресенье):</b> институциональные биржи закрыты, сниженная ликвидность.";
+                }
+                break;
+        }
+
+        // 2. Day of Month
+        let monthScore = 22;
+        let monthTitle = `${utcDate}-е число месяца`;
+        let monthDesc = "";
+        if (utcDate >= 24 && utcDate <= 28) {
+            monthScore = 26;
+            monthTitle += ` (${monthScore}/30)`;
+            monthDesc = "<b>Экспирация опционов Deribit (08:00 UTC).</b> Окно закрытия месячных опционов. Маркетмейкеры удерживают цену вблизи Max Pain, после чего начинается ралли.";
+        } else if (utcDate >= 10 && utcDate <= 14) {
+            monthScore = 15;
+            monthTitle += ` (${monthScore}/30)`;
+            monthDesc = "<b>Окно макроданных США (CPI / Инфляция).</b> Повышенная волатильность на новостях. Рекомендуются глубокие сетки с запасом хода.";
+        } else if (utcDate >= 1 && utcDate <= 4) {
+            monthScore = 20;
+            monthTitle += ` (${monthScore}/30)`;
+            monthDesc = "<b>Начало месяца & отчет NFP.</b> Приток свежего институционального капитала в криптоактивы после закрытия месячных книг.";
+        } else {
+            monthScore = 24;
+            monthTitle += ` (${monthScore}/30)`;
+            monthDesc = "<b>Штатный календарный цикл.</b> Стабильное распределение ликвидности без аномалий Max Pain и плановых макрошоков.";
+        }
+
+        // 3. Trading Session
+        let sessionScore = 14;
+        let sessionTitle = "";
+        let sessionDesc = "";
+        let sessionReason = "";
+
+        if (timeMin >= 13 * 60 + 30 && timeMin <= 20 * 60) { // 13:30 - 20:00 UTC
+            sessionScore = 20;
+            sessionTitle = `Американская сессия (Нью-Йорк) (${sessionScore}/20)`;
+            sessionDesc = "Пик мировой ликвидности! Работают Уолл-стрит и фонды спотовых ETF. Лучшее время для отработки истинных трендовых импульсов.";
+            sessionReason = `⚡ <b>Пиковая сессия США (${pad(utcHours)}:${pad(utcMins)} UTC):</b> максимальная плотность стакана и подтверждение объемов.`;
+        } else if (timeMin >= 8 * 60 && timeMin < 13 * 60 + 30) { // 08:00 - 13:30 UTC
+            sessionScore = 18;
+            sessionTitle = `Европейская сессия (Лондон) (${sessionScore}/20)`;
+            sessionDesc = "Открытие европейских банков и бирж. Заход институционального капитала, снятие азиатских экстремумов (Judas Swing).";
+            sessionReason = `⚡ <b>Лондонская сессия (${pad(utcHours)}:${pad(utcMins)} UTC):</b> приток европейской ликвидности.`;
+        } else if (timeMin >= 20 * 60 && timeMin <= 23 * 60 + 59) { // 20:00 - 23:59 UTC
+            sessionScore = 15;
+            sessionTitle = `Вечернее закрытие США / Handover (${sessionScore}/20)`;
+            sessionDesc = "Завершение американских торгов (18:00-21:00 UTC). Снижение волатильности, подготовка к 8-часовому сбросу фандинга (00:00 UTC).";
+            sessionReason = `⏱️ <b>Текущее время (${pad(utcHours)}:${pad(utcMins)} UTC):</b> вечернее закрытие США, сброс фандинга в 00:00 UTC.`;
+        } else { // 00:00 - 08:00 UTC
+            sessionScore = 15;
+            sessionTitle = `Азиатская сессия (Токио / Сингапур) (${sessionScore}/20)`;
+            sessionDesc = "Азиатский ночной диапазон (Asian Range). Тонкий ночной стакан идеально исполняет лимитные ордера на накопление китов.";
+            sessionReason = `🌙 <b>Азиатская сессия (${pad(utcHours)}:${pad(utcMins)} UTC):</b> формирование первичного диапазона дня (Asian Range).`;
+        }
+
+        // 4. Macro & Total Score
+        const macroScore = 20;
+        let totalScore = dayScore + monthScore + sessionScore + macroScore;
+        if (totalScore > 100) totalScore = 100;
+
+        // Update DOM elements
+        const badgeEl = document.getElementById('timing-status-badge');
+        const headlineEl = document.getElementById('timing-headline');
+        const leadEl = document.getElementById('timing-lead');
+        const scoreEl = document.getElementById('timing-index-score');
+        const dayScoreEl = document.getElementById('factor-day-score');
+        const dayDescEl = document.getElementById('factor-day-desc');
+        const monthScoreEl = document.getElementById('factor-month-score');
+        const monthDescEl = document.getElementById('factor-month-desc');
+        const sessionScoreEl = document.getElementById('factor-session-score');
+        const sessionDescEl = document.getElementById('factor-session-desc');
+        const whyListEl = document.getElementById('timing-why-list');
+
+        if (scoreEl) scoreEl.innerText = `${totalScore}/100`;
+
+        if (badgeEl && headlineEl && leadEl) {
+            if (totalScore >= 75) {
+                badgeEl.innerText = `🟢 ЗОЛОТОЕ ОКНО ДЛЯ ВХОДА (${totalScore}/100)`;
+                headlineEl.innerText = "Идеальное время: Высокая институциональная ликвидность";
+                leadEl.innerText = "👉 ОТЛИЧНЫЙ МОМЕНТ ДЛЯ ВХОДА. Рекомендуется выставление 3-ордерных сеток по стратегии Вайкоффа.";
+            } else if (totalScore >= 60) {
+                badgeEl.innerText = `🟡 БЛАГОПРИЯТНЫЙ ТАЙМИНГ (${totalScore}/100)`;
+                headlineEl.innerText = "Умеренная институциональная ликвидность";
+                leadEl.innerText = "👉 УМЕРЕННЫЙ РЕЖИМ. Безопасная расстановка лимитных сеток с повышенным запасом хода.";
+            } else {
+                badgeEl.innerText = `🔴 ПОВЫШЕННЫЙ РИСК (${totalScore}/100)`;
+                headlineEl.innerText = "Тонкий рынок или переходная фаза";
+                leadEl.innerText = "👉 ПОВЫШЕННАЯ ВОЛАТИЛЬНОСТЬ. Входы строго глубокими лимитками с защитой от сквизов.";
+            }
+        }
+
+        if (dayScoreEl) dayScoreEl.innerText = dayTitle;
+        if (dayDescEl) dayDescEl.innerText = dayDesc;
+        if (monthScoreEl) monthScoreEl.innerHTML = monthTitle;
+        if (monthDescEl) monthDescEl.innerHTML = monthDesc;
+        if (sessionScoreEl) sessionScoreEl.innerText = sessionTitle;
+        if (sessionDescEl) sessionDescEl.innerText = sessionDesc;
+
+        if (whyListEl) {
+            const dayIcon = utcDay in {1:1, 4:1} ? '⚡' : (utcDay in {2:1, 3:1} ? '💎' : '🛑');
+            whyListEl.innerHTML = `
+                <li><span>✅</span><span><b>Плановые макрошоки ФРС отсутствуют;</b> рыночная структура стабильна.</span></li>
+                <li><span>${dayIcon}</span><span>${dayReason}</span></li>
+                <li><span>${timeMin < 8*60 ? '🌙' : '⏱️'}</span><span>${sessionReason}</span></li>
+            `;
+        }
+    }
+
     // Institutional Live UTC Clock
     function updateUtcClock() {
         const el = document.getElementById('display-time');
@@ -1245,7 +1423,9 @@
         el.innerText = `${y}-${m}-${d} ${h}:${min}:${s} UTC`;
     }
     updateUtcClock();
+    updateMarketTimingWindow();
     setInterval(updateUtcClock, 1000);
+    setInterval(updateMarketTimingWindow, 30000);
 
     // Initial load: automatically pull real live price from Bybit V5
     fetchBybitPrice('BTCUSDT');
