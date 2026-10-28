@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Syndicate | Institutional Timing & Wyckoff Calculator</title>
+    <title>Market Syndicate | Institutional Timing & Smart Money Grid Calculator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -659,7 +659,7 @@
             <span class="brand-logo">🛡️</span>
             <div>
                 <h1>MARKET SYNDICATE</h1>
-                <p>QUANTITATIVE WYCKOFF TERMINAL &bull; LEAD MAGNET PROTOTYPE</p>
+                <p>QUANTITATIVE SMART MONEY TERMINAL &bull; LEAD MAGNET PROTOTYPE</p>
             </div>
         </div>
         <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
@@ -693,7 +693,7 @@
         </div>
 
         <div class="timing-lead" id="timing-lead">
-            👉 ОТЛИЧНЫЙ МОМЕНТ ДЛЯ ВХОДА. Рекомендуется выставление 3-ордерных сеток по стратегии Вайкоффа.
+            👉 ОТЛИЧНЫЙ МОМЕНТ ДЛЯ ВХОДА. Рекомендуется выставление 3-ордерных защитных сеток Smart Money.
         </div>
 
         <div class="timing-meta-row">
@@ -763,11 +763,11 @@
         </div>
     </section>
 
-    <!-- CARD 2: INTERACTIVE WYCKOFF ORDER CALCULATOR -->
+    <!-- CARD 2: INTERACTIVE SMART MONEY ORDER CALCULATOR -->
     <section class="card">
         <div class="calc-header">
             <div>
-                <h2>📐 ИНТЕРАКТИВНЫЙ КАЛЬКУЛЯТОР СЕТОК ВАЙКОФФА</h2>
+                <h2>📐 ИНТЕРАКТИВНЫЙ КАЛЬКУЛЯТОР СЕТОК SMART MONEY</h2>
                 <p>Математический расчет безопасных лимитных входов, объемов и тейк-профитов для Bybit V5</p>
             </div>
         </div>
@@ -822,7 +822,7 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label">Сетка Вайкоффа</label>
+                <label class="form-label">Сетка Smart Money (Откуп китов)</label>
                 <select id="preset-input" class="form-select">
                     <option value="standard" selected>Стандартная (-3.5% / -7.0% / -11.2%)</option>
                     <option value="expanded">Расширенная буферная (-6.0% / -11.2% / -16.5%)</option>
@@ -1166,7 +1166,7 @@
 
         // Full Bybit instruction text
         const tagLine = isExpanded ? 'Расширенная буферная сетка (Выходные / Макро)' : 'Стандартная институциональная сетка';
-        const txt = `🎯 ИНСТРУКЦИЯ ВЫСТАВЛЕНИЯ СЕТКИ ВАЙКОФФА ДЛЯ ${symbol}\n` +
+        const txt = `🎯 ИНСТРУКЦИЯ ВЫСТАВЛЕНИЯ СЕТКИ SMART MONEY ДЛЯ ${symbol}\n` +
             `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
             `📊 Параметры сделки: Плечо ${leverage}x Isolated | Депозит: $${budget} USDT\n` +
             `🏷️ Модель сетки: ${tagLine}\n` +
@@ -1279,7 +1279,7 @@
             case 2: // Tuesday
                 dayScore = 30;
                 dayTitle = `Вторник (${dayScore}/30) 💎`;
-                dayDesc = "Золотой день недели: минимум/максимум недели сформирован, приток максимального институционального объема, высокая точность отработки сеток Вайкоффа.";
+                dayDesc = "Золотой день недели: минимум/максимум недели сформирован, приток максимального институционального объема, высокая точность отработки сеток Smart Money.";
                 dayReason = "<b>Золотой день недели (Вторник):</b> максимальная плотность стаканов и приток институциональных объемов.";
                 break;
             case 3: // Wednesday
@@ -1403,7 +1403,7 @@
             if (totalScore >= 75) {
                 badgeEl.innerText = `🟢 ЗОЛОТОЕ ОКНО ДЛЯ ВХОДА (${totalScore}/100)`;
                 headlineEl.innerText = "Идеальное время: Высокая институциональная ликвидность";
-                leadEl.innerText = "👉 ОТЛИЧНЫЙ МОМЕНТ ДЛЯ ВХОДА. Рекомендуется выставление 3-ордерных сеток по стратегии Вайкоффа.";
+                leadEl.innerText = "👉 ОТЛИЧНЫЙ МОМЕНТ ДЛЯ ВХОДА. Рекомендуется выставление 3-ордерных защитных сеток Smart Money.";
                 if (recBannerEl) recBannerEl.innerHTML = "🎯 <b>Рекомендованное действие алгоритма:</b> Безопасное размещение лимитных ордеров по рассчитанным зонам входа Prime-кандидатов.";
             } else if (totalScore >= 50) {
                 badgeEl.innerText = `🟡 УМЕРЕННОЕ ОКНО (${totalScore}/100)`;

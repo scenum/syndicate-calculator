@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Syndicate | Institutional Timing & Wyckoff Calculator (EN)</title>
+    <title>Market Syndicate | Institutional Timing & Smart Money Grid Calculator (EN)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -684,7 +684,7 @@
             <span class="brand-logo">🛡️</span>
             <div>
                 <h1>MARKET SYNDICATE</h1>
-                <p>QUANTITATIVE WYCKOFF TERMINAL &bull; LEAD MAGNET PROTOTYPE</p>
+                <p>QUANTITATIVE SMART MONEY TERMINAL &bull; LEAD MAGNET PROTOTYPE</p>
             </div>
         </div>
         <div class="header-actions" style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
@@ -716,7 +716,7 @@
         </div>
 
         <div class="timing-lead" id="timing-lead">
-            👉 EXCELLENT ENTRY CONDITIONS. Deployment of 3-order Wyckoff limit ladders recommended.
+            👉 EXCELLENT ENTRY CONDITIONS. Deployment of 3-order Smart Money limit ladders recommended.
         </div>
 
         <div class="timing-meta-row">
@@ -781,16 +781,16 @@
             </ul>
 
             <div class="recommendation-banner" id="timing-rec-banner">
-                🎯 <b>Recommended Algorithm Action:</b> Safe placement of limit orders along computed Wyckoff prime entry zones.
+                🎯 <b>Recommended Algorithm Action:</b> Safe placement of limit orders along computed Smart Money prime entry zones.
             </div>
         </div>
     </section>
 
-    <!-- CARD 2: INTERACTIVE WYCKOFF ORDER CALCULATOR -->
+    <!-- CARD 2: INTERACTIVE SMART MONEY ORDER CALCULATOR -->
     <section class="card">
         <div class="calc-header">
             <div>
-                <h2>📐 INTERACTIVE WYCKOFF GRID CALCULATOR</h2>
+                <h2>📐 INTERACTIVE SMART MONEY GRID CALCULATOR</h2>
                 <p>Mathematical execution model for safe Bybit V5 limit entries, position sizing, and profit targets</p>
             </div>
         </div>
@@ -845,7 +845,7 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label">Wyckoff Grid Preset</label>
+                <label class="form-label">Smart Money Grid Preset</label>
                 <select id="preset-input" class="form-select">
                     <option value="standard" selected>Standard (-3.5% / -7.0% / -11.2%)</option>
                     <option value="expanded">Expanded Buffer (-6.0% / -11.2% / -16.5%)</option>
@@ -1189,7 +1189,7 @@
 
         // Full Bybit instruction text
         const tagLine = isExpanded ? 'Expanded Defensive Buffer (Weekend / Macro)' : 'Standard Institutional Accumulation Ladder';
-        const txt = `🎯 BYBIT WYCKOFF GRID EXECUTION ORDER FOR ${symbol}\n` +
+        const txt = `🎯 BYBIT SMART MONEY GRID EXECUTION ORDER FOR ${symbol}\n` +
             `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
             `📊 Trade Setup: ${leverage}x Isolated Leverage | Margin: $${budget} USDT\n` +
             `🏷️ Execution Model: ${tagLine}\n` +
@@ -1302,14 +1302,14 @@
             case 2: // Tuesday
                 dayScore = 30;
                 dayTitle = `Tuesday (${dayScore}/30) 💎`;
-                dayDesc = "Golden Day of the Week: weekly high/low set, maximum institutional volume inflow, highest precision on Wyckoff ladder fills.";
+                dayDesc = "Golden Day of the Week: weekly high/low set, maximum institutional volume inflow, highest precision on Smart Money ladder fills.";
                 dayReason = "<b>Golden Day (Tuesday):</b> Maximum order book density and institutional liquidity inflow.";
                 break;
             case 3: // Wednesday
                 dayScore = 30;
                 dayTitle = `Wednesday (${dayScore}/30) 💎`;
                 dayDesc = "Golden Day of the Week: weekly trend expansion phase. Peak derivatives liquidity across Bybit and Binance.";
-                dayReason = "<b>Golden Day (Wednesday):</b> Peak weekly market liquidity and reliable Wyckoff ladder execution.";
+                dayReason = "<b>Golden Day (Wednesday):</b> Peak weekly market liquidity and reliable Smart Money ladder execution.";
                 break;
             case 4: // Thursday
                 if (utcHours >= 17) {
@@ -1382,7 +1382,7 @@
         if (timeMin >= 13 * 60 + 30 && timeMin <= 20 * 60) { // 13:30 - 20:00 UTC
             sessionScore = 20;
             sessionTitle = `US Session (New York / Wall St) (${sessionScore}/20)`;
-            sessionDesc = "Peak global liquidity! Wall Street and spot ETF funds operating. Prime timing for genuine Wyckoff momentum.";
+            sessionDesc = "Peak global liquidity! Wall Street and spot ETF funds operating. Prime timing for genuine Smart Money momentum.";
             sessionReason = `⚡ <b>US Peak Session (${pad(utcHours)}:${pad(utcMins)} UTC):</b> Maximum order book depth and volume confirmation.`;
         } else if (timeMin >= 8 * 60 && timeMin < 13 * 60 + 30) { // 08:00 - 13:30 UTC
             sessionScore = 18;
@@ -1426,8 +1426,8 @@
             if (totalScore >= 75) {
                 badgeEl.innerText = `🟢 GOLDEN ENTRY WINDOW (${totalScore}/100)`;
                 headlineEl.innerText = "Optimal Timing: High Institutional Liquidity Window";
-                leadEl.innerText = "👉 EXCELLENT ENTRY CONDITIONS. Deployment of 3-order Wyckoff limit ladders recommended.";
-                if (recBannerEl) recBannerEl.innerHTML = "🎯 <b>Recommended Algorithm Action:</b> Safe placement of limit orders along computed Wyckoff prime entry zones.";
+                leadEl.innerText = "👉 EXCELLENT ENTRY CONDITIONS. Deployment of 3-order Smart Money limit ladders recommended.";
+                if (recBannerEl) recBannerEl.innerHTML = "🎯 <b>Recommended Algorithm Action:</b> Safe placement of limit orders along computed Smart Money prime entry zones.";
             } else if (totalScore >= 50) {
                 badgeEl.innerText = `🟡 MODERATE ENTRY WINDOW (${totalScore}/100)`;
                 headlineEl.innerText = "Moderate Risk: Elevated Caution Required";
