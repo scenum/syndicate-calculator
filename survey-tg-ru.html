@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Syndicate | Опрос Исследователя — Telegram Alpha Room [RU]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #07090e;
+            --bg-card: #0d121d;
+            --bg-card-subtle: #121927;
+            --border-color: #1c2638;
+            --border-highlight: #2a3b57;
+            --accent-green: #00e676;
+            --accent-green-dim: rgba(0, 230, 118, 0.12);
+            --accent-cyan: #00e5ff;
+            --accent-cyan-dim: rgba(0, 229, 255, 0.1);
+            --accent-yellow: #ffb300;
+            --text-main: #f1f5f9;
+            --text-muted: #8e9bb0;
+            --font-display: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-display);
+            min-height: 100vh;
+            padding: 2rem 1rem 3rem 1rem;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 680px; margin: 0 auto; }
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 1.25rem;
+            margin-bottom: 1.75rem;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .brand-title { display: flex; align-items: center; gap: 0.75rem; }
+        .brand-logo { font-size: 1.75rem; filter: drop-shadow(0 0 12px rgba(0, 229, 255, 0.4)); }
+        .brand-title h1 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #ffffff, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .brand-title p { font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); }
+        .badge-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--accent-green-dim);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            color: var(--accent-green);
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+        .survey-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 2rem;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .progress-bar-wrap {
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-color);
+            height: 8px;
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+            width: 25%;
+            transition: width 0.35s ease;
+        }
+        .step-label {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+        .question-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            color: #ffffff;
+        }
+        .options-list { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.75rem; }
+        .option-btn {
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            color: var(--text-main);
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .option-btn:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 229, 255, 0.06);
+            transform: translateY(-1px);
+        }
+        .option-btn.selected {
+            border-color: var(--accent-green);
+            background: var(--accent-green-dim);
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .option-btn .check-icon {
+            opacity: 0;
+            color: var(--accent-green);
+            font-weight: 800;
+            transition: opacity 0.2s ease;
+        }
+        .option-btn.selected .check-icon { opacity: 1; }
+        .nav-actions { display: flex; justify-content: space-between; align-items: center; }
+        .btn-prev {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-prev:hover { color: var(--text-main); border-color: var(--text-muted); }
+        .btn-next {
+            background: linear-gradient(135deg, var(--accent-green), #00b0ff);
+            border: none;
+            color: #07090e;
+            padding: 0.75rem 1.75rem;
+            border-radius: 8px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+        }
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 230, 118, 0.5);
+        }
+        .btn-next:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Success Screen */
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: 1rem 0.5rem;
+        }
+        .success-shield {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 25px rgba(0, 230, 118, 0.5));
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+            100% { transform: scale(1); }
+        }
+        .success-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 0.75rem;
+        }
+        .success-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .invite-cta-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            background: linear-gradient(135deg, #00e676 0%, #00b0ff 100%);
+            color: #07090e;
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-decoration: none;
+            padding: 1.15rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 230, 118, 0.35);
+            transition: all 0.25s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .invite-cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(0, 230, 118, 0.6);
+            color: #000;
+        }
+        .secondary-link {
+            display: inline-block;
+            margin-top: 1.25rem;
+            color: var(--accent-cyan);
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+            text-decoration: none;
+        }
+        .secondary-link:hover { text-decoration: underline; }
+        .footer-note {
+            text-align: center;
+            margin-top: 2rem;
+            color: #475569;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="brand-header">
+            <div class="brand-title">
+                <div class="brand-logo">🛡️</div>
+                <div>
+                    <h1>Market Syndicate</h1>
+                    <p>QUANTITATIVE RESEARCH PROTOCOL v13.6</p>
+                </div>
+            </div>
+            <div class="badge-live">
+                <span>●</span> TELEGRAM ALPHA VERIFICATION [RU]
+            </div>
+        </header>
+
+        <div class="survey-card">
+            <div class="progress-bar-wrap" id="progressWrap">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+
+            <!-- STEP 1 -->
+            <div class="step-pane" id="step1">
+                <div class="step-label">Шаг 1 из 4: Торговый профиль</div>
+                <h2 class="question-title">Какой ваш основной стиль торговли на крипторынке?</h2>
+                <div class="options-list">
+                    <button class="option-btn" onclick="selectOption(1, this, 'Количественный / Алго-сетки')">
+                        <span>📊 Алгоритмические 3-уровневые сетки и Smart Money</span>
+                        <span class="check-icon">✓</span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(1, this, 'Свинг-трейдинг')">
+                        <span>📈 Свинг-трейдинг на бессрочных деривативах Bybit</span>
+                        <span class="check-icon">✓</span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(1, this, 'Ончейн-аналитика')">
+                        <span>🐳 Торговля по следам китовых кошельков и HFT-стакану</span>
+                        <span class="check-icon">✓</span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(1, this, 'Начинающий исследователь')">
+                        <span>🛡️ Исследователь: ищу защиту от ликвидаций и надежный риск-менеджмент</span>
+                        <span class="check-icon">✓</span>
+                    </button>
+                </div>
+                <div class="nav-actions">
+                    <div></div>
+                    <button class="btn-next" id="next1" disabled onclick="nextStep(2)">Далее ➔</button>
+                </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="step-pane" id="step2" style="display: none;">
+                <div class="step-label">Шаг 2 из 4: Риск-менеджмент</div>
+                <h2 class="question-title">Какой допустимый риск на позицию вы используете?</h2>
+                <div class="options-list">
+                    <button class="option-btn" onclick="selectOption(2, this, 'Консервативный (1-2%)')">
+                        <span>🔒 Консервативный: 1–2% депозита, изолированная маржа 2x–3x</span>
+                        <span class="check-icon">✓</span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(2, this, 'Умеренный (3-5%)')">
+                        <span>⚖️ Умеренный: 3–5% с адаптивным стоп-лоссом 2.5 ATR под Order 3</span>
+                        <span class="check-icon">✓</span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(2, this, 'Динамический')">
+                        <span>⚡ Динамический: переношу Stop-Loss в безубыток сразу при TP1</span>
+                        <span class="check-icon">✓</span>
+                    </button>
+                </div>
+                <div class="nav-actions">
+                    <button class="btn-prev" onclick="prevStep(1)">← Назад</button>
+                    <button class="btn-next" id="next2" disabled onclick="nextStep(3)">Далее ➔</button>
+                </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="step-pane" id="step3" style="display: none;">
+                <div class="step-label">Шаг 3 из 4: Инструменты</div>
+                <h2 class="question-title">Какие сетапы вы хотите отслеживать в закрытой комнате?</h2>
+                <div class="options-list">
+                    <button class="option-btn" onclick="selectOption(3, this, 'Все сетапы Вайкоффа')">
+                        <span>🏆 Полный пул сетапов с подтвержденным накоплением китов (скор > 85)</span>
+                        <span class="check-icon">✓</span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(3, this, 'Параметры сеток')">
+                        <span>📐 Точные цены лимиток, безубытка и стопов до публичного релиза</span>
+                        <span class="check-icon">✓</span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption(3, this, 'Алерты макро-риска')">
+                        <span>🚨 Экстренные оповещения о ликвидационных каскадах и макро-угрозах</span>
+                        <span class="check-icon">✓</span>
+                    </button>
+                </div>
+                <div class="nav-actions">
+                    <button class="btn-prev" onclick="prevStep(2)">← Назад</button>
+                    <button class="btn-next" id="next3" disabled onclick="nextStep(4)">Далее ➔</button>
+                </div>
+            </div>
+
+            <!-- STEP 4 -->
+            <div class="step-pane" id="step4" style="display: none;">
+                <div class="step-label">Шаг 4 из 4: Правила сообщества</div>
+                <h2 class="question-title">Подтверждаете соблюдение регламента закрытой комнаты?</h2>
+                <div class="options-list">
+                    <button class="option-btn" onclick="selectOption(4, this, 'Правила приняты')">
+                        <span>✅ Подтверждаю: строго соблюдаю риск-менеджмент, запрет на спам и рекламу</span>
+                        <span class="check-icon">✓</span>
+                    </button>
+                </div>
+                <div class="nav-actions">
+                    <button class="btn-prev" onclick="prevStep(3)">← Назад</button>
+                    <button class="btn-next" id="next4" disabled onclick="finishSurvey()">Завершить верификацию ➔</button>
+                </div>
+            </div>
+
+            <!-- SUCCESS SCREEN -->
+            <div class="success-screen" id="successScreen">
+                <div class="success-shield">🛡️</div>
+                <h2 class="success-title">ВЕРИФИКАЦИЯ ПРОЙДЕНА</h2>
+                <p class="success-desc">
+                    Вы успешно прошли опрос исследователя и подтвердили соблюдение риск-протокола.
+                    Ваш персональный пропуск в закрытую русскоязычную комнату готов.
+                </p>
+                <a href="https://t.me/+Bg16AWEyYQQyMmRi" class="invite-cta-btn" id="successBtn">
+                    <span>Вступить в Bybit Radar | Alpha Room [RU]</span>
+                    <span>➔</span>
+                </a>
+                <div>
+                    <a href="index.html" class="secondary-link">← Открыть Калькулятор Безопасных Сеток</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-note">
+            Market Syndicate Quantitative Terminal v13.6 | Air-Gapped Risk Protocol Active
+        </div>
+    </div>
+
+    <script>
+        const answers = {};
+
+        function selectOption(step, btn, val) {
+            const container = btn.parentElement;
+            container.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            answers[step] = val;
+            document.getElementById(`next${step}`).disabled = false;
+        }
+
+        function nextStep(step) {
+            document.querySelectorAll('.step-pane').forEach(p => p.style.display = 'none');
+            document.getElementById(`step${step}`).style.display = 'block';
+            document.getElementById('progressBar').style.width = `${(step / 4) * 100}%`;
+        }
+
+        function prevStep(step) {
+            document.querySelectorAll('.step-pane').forEach(p => p.style.display = 'none');
+            document.getElementById(`step${step}`).style.display = 'block';
+            document.getElementById('progressBar').style.width = `${(step / 4) * 100}%`;
+        }
+
+        function finishSurvey() {
+            document.querySelectorAll('.step-pane').forEach(p => p.style.display = 'none');
+            document.getElementById('progressWrap').style.display = 'none';
+            document.getElementById('successScreen').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
