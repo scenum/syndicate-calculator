@@ -327,7 +327,7 @@
                 <div class="step-label">Шаг 3 из 4: Инструменты</div>
                 <h2 class="question-title">Какие сетапы вы хотите отслеживать в закрытой комнате?</h2>
                 <div class="options-list">
-                    <button class="option-btn" onclick="selectOption(3, this, 'Все сетапы Вайкоффа')">
+                    <button class="option-btn" onclick="selectOption(3, this, 'Все сетапы китов')">
                         <span>🏆 Полный пул сетапов с подтвержденным накоплением китов (скор > 85)</span>
                         <span class="check-icon">✓</span>
                     </button>
@@ -406,10 +406,72 @@
             document.getElementById('progressBar').style.width = `${(step / 4) * 100}%`;
         }
 
+        const LEADS_WEBHOOK_URL = 'https://discord.com/api/webhooks/1566881693414068355/6Pgwj5Q6v6TP6SI2VlcOdIHPA-wsd8yPJ-BXFjiJSWtqWlQz9dgwzWvqPDbrAHLeGqMs';
+
+        async function sendLeadNotification() {
+            try {
+                const payload = {
+                    username: 'Syndicate Lead Radar',
+                    embeds: [
+                        {
+                            title: '📥 НОВАЯ АНКЕТА: ДОСТУП В ЗАКРЫТУЮ КОМНАТУ',
+                            color: 0x00E676,
+                            description: 'Пользователь успешно завершил верификационный опрос и получил инвайт в **Telegram [RU]**.',
+                            fields: [
+                                {
+                                    name: '📊 Торговый профиль (Шаг 1)',
+                                    value: `\`${answers[1] || 'Не указан'}\``,
+                                    inline: false
+                                },
+                                {
+                                    name: '⚖️ Риск-менеджмент (Шаг 2)',
+                                    value: `\`${answers[2] || 'Не указан'}\``,
+                                    inline: false
+                                },
+                                {
+                                    name: '🎯 Приоритет / Сетапы (Шаг 3)',
+                                    value: `\`${answers[3] || 'Не указан'}\``,
+                                    inline: false
+                                },
+                                {
+                                    name: '🛡️ Регламент комнаты (Шаг 4)',
+                                    value: `\`${answers[4] || 'Принят'}\``,
+                                    inline: false
+                                },
+                                {
+                                    name: '🌐 Воронка / Платформа',
+                                    value: '`Telegram RU`',
+                                    inline: true
+                                },
+                                {
+                                    name: '📱 Устройство',
+                                    value: `\`${/Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop'}\``,
+                                    inline: true
+                                }
+                            ],
+                            footer: {
+                                text: 'Market Syndicate Lead Dispatcher • v13.6'
+                            },
+                            timestamp: new Date().toISOString()
+                        }
+                    ]
+                };
+
+                await fetch(LEADS_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) {
+                console.error('Lead dispatch error:', err);
+            }
+        }
+
         function finishSurvey() {
             document.querySelectorAll('.step-pane').forEach(p => p.style.display = 'none');
             document.getElementById('progressWrap').style.display = 'none';
             document.getElementById('successScreen').style.display = 'block';
+            sendLeadNotification();
         }
     </script>
 </body>
