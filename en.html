@@ -663,6 +663,134 @@
             text-decoration: underline;
         }
 
+        /* Strategy Selector Tabs */
+        .strategy-selector {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            background: var(--bg-card-subtle);
+            padding: 0.35rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .strat-tab-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .strat-tab-btn:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .strat-tab-btn.active {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(0, 230, 118, 0.15));
+            border-color: var(--accent-cyan);
+            color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 229, 255, 0.2);
+        }
+
+        .badge-rec {
+            font-size: 0.65rem;
+            background: var(--accent-green);
+            color: #041019;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Quick Budget Chips */
+        .quick-budgets {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-top: 0.4rem;
+        }
+
+        .budget-chip {
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .budget-chip:hover, .budget-chip.active {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+            background: var(--accent-green-dim);
+        }
+
+        /* Bybit Terminal Button */
+        .btn-bybit {
+            background: #f7a600;
+            color: #121212;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(247, 166, 0, 0.25);
+        }
+
+        .btn-bybit:hover {
+            background: #ffb726;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(247, 166, 0, 0.4);
+        }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            pointer-events: none;
+        }
+
+        .toast-msg {
+            background: #0d1624;
+            border: 1px solid var(--accent-green);
+            color: #ffffff;
+            padding: 0.85rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 230, 118, 0.2);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: auto;
+        }
+
+        .toast-msg.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
         @media (max-width: 640px) {
             body { padding: 1rem 0.75rem 2rem 0.75rem; }
             .card { padding: 1.25rem; }
@@ -786,13 +914,23 @@
         </div>
     </section>
 
-    <!-- CARD 2: INTERACTIVE SMART MONEY ORDER CALCULATOR -->
+    <!-- CARD 2: INTERACTIVE QUANTITATIVE CALCULATOR -->
     <section class="card">
         <div class="calc-header">
             <div>
-                <h2>📐 INTERACTIVE SMART MONEY GRID CALCULATOR</h2>
-                <p>Mathematical execution model for safe Bybit V5 limit entries, position sizing, and profit targets</p>
+                <h2>📐 INTERACTIVE QUANTITATIVE CALCULATOR</h2>
+                <p>Mathematical execution model for Bybit V5 entries, position sizing, stop-loss, and cascading profit targets</p>
             </div>
+        </div>
+
+        <!-- Strategy Mode Selector Tabs -->
+        <div class="strategy-selector">
+            <button type="button" class="strat-tab-btn active" id="strat-sniper-btn" onclick="setStrategyMode('sniper')">
+                🎯 Sniper 3x + Cascading Runner (50/25/25) <span class="badge-rec">Recommended</span>
+            </button>
+            <button type="button" class="strat-tab-btn" id="strat-grid-btn" onclick="setStrategyMode('grid')">
+                🛡️ Smart Money Accumulation Grid (3 Orders)
+            </button>
         </div>
 
         <!-- Inputs Form -->
@@ -803,16 +941,18 @@
                     <span style="font-size:0.72rem; color:var(--text-muted); font-family:var(--font-mono);">[Enter ↵]</span>
                 </div>
                 <div style="position:relative; display:flex; align-items:center;">
-                    <input type="text" id="symbol-input" class="form-input" value="BTCUSDT" placeholder="e.g. TONUSDT, DOGE..." style="padding-right:2.4rem;">
+                    <input type="text" id="symbol-input" class="form-input" value="BTCUSDT" placeholder="e.g. INJ, AAVE..." style="padding-right:2.4rem;">
                     <button type="button" onclick="submitSymbolSearch()" title="Query live price and calculate (Enter)" style="position:absolute; right:8px; background:none; border:none; color:var(--accent-cyan); cursor:pointer; font-size:1.05rem; line-height:1; padding:2px;">🔍</button>
                 </div>
                 <div class="quick-coins">
                     <span class="coin-chip active" onclick="setCoin('BTCUSDT')">BTC</span>
                     <span class="coin-chip" onclick="setCoin('ETHUSDT')">ETH</span>
                     <span class="coin-chip" onclick="setCoin('SOLUSDT')">SOL</span>
+                    <span class="coin-chip" onclick="setCoin('INJUSDT')">INJ</span>
+                    <span class="coin-chip" onclick="setCoin('AAVEUSDT')">AAVE</span>
+                    <span class="coin-chip" onclick="setCoin('AVAXUSDT')">AVAX</span>
                     <span class="coin-chip" onclick="setCoin('TAOUSDT')">TAO</span>
-                    <span class="coin-chip" onclick="setCoin('NEARUSDT')">NEAR</span>
-                    <span class="coin-chip" onclick="setCoin('SUIUSDT')">SUI</span>
+                    <span class="coin-chip" onclick="setCoin('LINKUSDT')">LINK</span>
                 </div>
             </div>
 
@@ -830,25 +970,34 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label">Trade Margin ($ USDT)</label>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <label class="form-label">Trade Margin ($ USDT)</label>
+                    <span style="font-size:0.72rem; color:var(--text-muted); font-family:var(--font-mono);">Collateral</span>
+                </div>
                 <input type="number" id="budget-input" class="form-input" value="100" min="10" step="10">
+                <div class="quick-budgets">
+                    <span class="budget-chip active" onclick="setBudget(100)">$100</span>
+                    <span class="budget-chip" onclick="setBudget(250)">$250</span>
+                    <span class="budget-chip" onclick="setBudget(500)">$500</span>
+                    <span class="budget-chip" onclick="setBudget(1000)">$1,000</span>
+                    <span class="budget-chip" onclick="setBudget(2500)">$2,500</span>
+                </div>
             </div>
 
             <div class="form-group">
                 <label class="form-label">Leverage (Isolated)</label>
                 <select id="leverage-input" class="form-select">
-                    <option value="1">1x (Spot / Zero Liquidation)</option>
+                    <option value="1">1x (Spot Vault / Zero Liquidation)</option>
                     <option value="2">2x (Conservative)</option>
-                    <option value="3" selected>3x (Institutional Standard)</option>
-                    <option value="5">5x (Max Permissible)</option>
+                    <option value="3" selected>3x Isolated (Syndicate Standard)</option>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Smart Money Grid Preset</label>
+            <div class="form-group" id="group-preset">
+                <label class="form-label" id="label-preset">Sniper Entry Setup</label>
                 <select id="preset-input" class="form-select">
-                    <option value="standard" selected>Standard (-3.5% / -7.0% / -11.2%)</option>
-                    <option value="expanded">Expanded Buffer (-6.0% / -11.2% / -16.5%)</option>
+                    <option value="sniper_market" selected>🎯 Current Market / Tight Limit Entry (Touch)</option>
+                    <option value="sniper_retest">⏳ 4H OB Pullback Limit Entry (-1.5%)</option>
                 </select>
             </div>
         </div>
@@ -956,6 +1105,9 @@
                 <button class="btn btn-primary" onclick="copyInstructions()">
                     📋 Copy Ready Bybit Instructions
                 </button>
+                <a id="btn-bybit-terminal" href="https://www.bybit.com/trade/usdt/BTCUSDT" target="_blank" class="btn btn-bybit">
+                    ⚡ Open Bybit Terminal (BTCUSDT) ➔
+                </a>
             </div>
         </div>
     </section>
@@ -983,6 +1135,8 @@
     </footer>
 
 </div>
+
+<div class="toast-container" id="toast-container"></div>
 
 <script>
     function formatNum(val) {
@@ -1113,6 +1267,70 @@
         }
     }
 
+    let currentStrategyMode = 'sniper'; // 'sniper' or 'grid'
+
+    function showToast(msg) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast-msg';
+        toast.innerHTML = `<span>✅</span><span>${msg}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 20);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 350);
+        }, 3200);
+    }
+
+    function setStrategyMode(mode) {
+        currentStrategyMode = mode;
+        const btnSniper = document.getElementById('strat-sniper-btn');
+        const btnGrid = document.getElementById('strat-grid-btn');
+        if (btnSniper) btnSniper.classList.toggle('active', mode === 'sniper');
+        if (btnGrid) btnGrid.classList.toggle('active', mode === 'grid');
+
+        const labelPreset = document.getElementById('label-preset');
+        const presetInput = document.getElementById('preset-input');
+        if (labelPreset && presetInput) {
+            if (mode === 'sniper') {
+                labelPreset.innerText = 'Sniper Entry Setup';
+                presetInput.innerHTML = `
+                    <option value="sniper_market" selected>🎯 Current Market / Tight Limit Entry (Touch)</option>
+                    <option value="sniper_retest">⏳ 4H OB Pullback Limit Entry (-1.5%)</option>
+                `;
+            } else {
+                labelPreset.innerText = 'Smart Money Accumulation Grid';
+                presetInput.innerHTML = `
+                    <option value="standard" selected>Standard (-3.5% / -7.0% / -11.2%)</option>
+                    <option value="expanded">Expanded Buffer (-6.0% / -11.2% / -16.5%)</option>
+                `;
+            }
+        }
+        recalc();
+    }
+
+    function setBudget(amount) {
+        const input = document.getElementById('budget-input');
+        if (input) {
+            input.value = amount;
+            document.querySelectorAll('.budget-chip').forEach(el => {
+                const text = el.innerText.replace('$', '').replace(',', '').replace('k', '000').replace('.5000', '500');
+                el.classList.toggle('active', parseInt(text, 10) === amount);
+            });
+            recalc();
+        }
+    }
+
+    function updateBybitDeepLink(symbol) {
+        const cleanSym = symbol.toUpperCase().trim();
+        const btn = document.getElementById('btn-bybit-terminal');
+        if (btn) {
+            btn.href = `https://www.bybit.com/trade/usdt/${cleanSym}`;
+            btn.innerText = `⚡ Open Bybit Terminal (${cleanSym}) ➔`;
+        }
+    }
+
     function setCoin(symbol) {
         document.getElementById('symbol-input').value = symbol;
         
@@ -1133,106 +1351,198 @@
         const price = parseFloat(document.getElementById('price-input').value) || 100;
         const budget = parseFloat(document.getElementById('budget-input').value) || 100;
         const leverage = parseFloat(document.getElementById('leverage-input').value) || 3;
-        const preset = document.getElementById('preset-input').value;
+        const presetEl = document.getElementById('preset-input');
+        const preset = presetEl ? presetEl.value : 'sniper_market';
         const token = symbol.replace('USDT', '');
 
-        const isExpanded = (preset === 'expanded');
+        updateBybitDeepLink(symbol);
 
-        // Order Margin breakdown 33.3% / 33.3% / 33.4%
-        const m1 = Math.round(budget * 0.333 * 100) / 100;
-        const m2 = Math.round(budget * 0.333 * 100) / 100;
-        const m3 = Math.round((budget - m1 - m2) * 100) / 100;
+        if (currentStrategyMode === 'sniper') {
+            // ==================== SNIPER 3X + CASCADE 50/25/25 ====================
+            const isRetest = (preset === 'sniper_retest');
+            const pEntry = isRetest ? (price * 0.985) : price;
+            const sl = pEntry * (1 - 0.038); // Strict 3.8% Stop Loss
+            const beTrigger = pEntry * (1 + 0.045); // +4.5% moves SL to pEntry (BE locked, Risk $0)
 
-        // Ladder price levels
-        const p1 = isExpanded ? (price * 0.940) : (price * 0.965);
-        const p2 = isExpanded ? (p1 * 0.945) : (p1 * 0.964);
-        const p3 = isExpanded ? (p2 * 0.940) : (p2 * 0.955);
-        const sl = isExpanded ? (p3 * 0.910) : (p3 * 0.940);
+            const totalTokens = (budget * leverage) / pEntry;
 
-        const tp1 = p1 * 1.200;
-        const tp2 = p2 * 1.300;
-        const tp3 = p1 * 1.400;
+            // Cascade Breakdown:
+            // 50% TP1 (+11.4% / R:R 1:3) -> 50% profit ratchets into Spot Vault!
+            const q1 = totalTokens * 0.50;
+            const m1 = budget * 0.50;
+            const tp1 = pEntry * (1 + 0.114);
+            const estProfit1 = (tp1 - pEntry) * q1;
+            const spotRatchetVal = estProfit1 * 0.50;
 
-        // Position quantities
-        const q1 = (m1 * leverage) / p1;
-        const q2 = (m2 * leverage) / p2;
-        const q3 = (m3 * leverage) / p3;
-        const totalQty = q1 + q2 + q3;
+            // 25% TP2 (+22.0% / R:R 1:6) -> Trailing SL locks above TP1
+            const q2 = totalTokens * 0.25;
+            const m2 = budget * 0.25;
+            const tp2 = pEntry * (1 + 0.220);
+            const estProfit2 = (tp2 - pEntry) * q2;
 
-        // Weighted Average Entry
-        const totalCost = (p1 * q1) + (p2 * q2) + (p3 * q3);
-        const avgEntry = totalCost / totalQty;
-        const beTrigger = avgEntry * 1.10; // +10% moves SL to BE
+            // 25% Super-Runner -> Infinite ceiling, Chandelier ATR / Daily EMA20 trailing
+            const q3 = totalTokens * 0.25;
+            const m3 = budget * 0.25;
 
-        // Risk on SL
-        const maxLoss = ((avgEntry - sl) * totalQty);
+            // Risk calculation
+            const maxLoss = (pEntry - sl) * totalTokens;
 
-        // Update UI Cards
-        document.getElementById('o1-tag').innerText = isExpanded ? '📍 ORDER #1 • 4H OB Deep (-6.0%)' : '📍 ORDER #1 • 4H OB (-3.5%)';
-        document.getElementById('o1-price').innerText = '$' + formatNum(p1);
-        document.getElementById('o1-qty').innerText = formatTokenQty(q1) + ' ' + token;
-        document.getElementById('o1-margin').innerText = '$' + m1.toFixed(2) + ' (33.3%)';
-        document.getElementById('o1-tp').innerText = '$' + formatNum(tp1) + ' (+20%)';
-        document.getElementById('o1-sl').innerText = '$' + formatNum(sl);
+            // Update UI Cards
+            document.getElementById('o1-tag').innerHTML = '🎯 ENTRY & TP1 (50% SIZE) &bull; R:R 1:3';
+            document.getElementById('o1-price').innerText = '$' + formatNum(pEntry);
+            document.getElementById('o1-qty').innerText = formatTokenQty(q1) + ' ' + token;
+            document.getElementById('o1-margin').innerText = '$' + m1.toFixed(2) + ' (50%)';
+            document.getElementById('o1-tp').innerText = '$' + formatNum(tp1) + ' (+11.4% / +' + (11.4 * leverage).toFixed(1) + '% ROE)';
+            document.getElementById('o1-sl').innerText = '$' + formatNum(sl) + ' (-3.8%)';
 
-        document.getElementById('o2-tag').innerText = isExpanded ? '⏳ ORDER #2 • 4H FVG Deep (-11.2%)' : '⏳ ORDER #2 • 4H FVG (-7.0%)';
-        document.getElementById('o2-price').innerText = '$' + formatNum(p2);
-        document.getElementById('o2-qty').innerText = formatTokenQty(q2) + ' ' + token;
-        document.getElementById('o2-margin').innerText = '$' + m2.toFixed(2) + ' (33.3%)';
-        document.getElementById('o2-tp').innerText = '$' + formatNum(tp2) + ' (+30%)';
-        document.getElementById('o2-sl').innerText = '$' + formatNum(sl);
+            document.getElementById('o2-tag').innerHTML = '🚀 CASCADING TP2 (25% SIZE) &bull; R:R 1:6';
+            document.getElementById('o2-price').innerText = '$' + formatNum(pEntry);
+            document.getElementById('o2-qty').innerText = formatTokenQty(q2) + ' ' + token;
+            document.getElementById('o2-margin').innerText = '$' + m2.toFixed(2) + ' (25%)';
+            document.getElementById('o2-tp').innerText = '$' + formatNum(tp2) + ' (+22.0% / +' + (22.0 * leverage).toFixed(1) + '% ROE)';
+            document.getElementById('o2-sl').innerText = 'Shift to Profit > TP1';
 
-        document.getElementById('o3-tag').innerText = isExpanded ? '🛡️ ORDER #3 • 1D Flush Support (-16.5%)' : '🛡️ ORDER #3 • 1D Major Support (-11.2%)';
-        document.getElementById('o3-price').innerText = '$' + formatNum(p3);
-        document.getElementById('o3-qty').innerText = formatTokenQty(q3) + ' ' + token;
-        document.getElementById('o3-margin').innerText = '$' + m3.toFixed(2) + ' (33.4%)';
-        document.getElementById('o3-tp').innerText = '$' + formatNum(tp3) + ' (+40%)';
-        document.getElementById('o3-sl').innerText = '$' + formatNum(sl);
+            document.getElementById('o3-tag').innerHTML = '💎 SUPER-RUNNER (25% SIZE) &bull; TREND EXTENSION';
+            document.getElementById('o3-price').innerText = '$' + formatNum(pEntry);
+            document.getElementById('o3-qty').innerText = formatTokenQty(q3) + ' ' + token;
+            document.getElementById('o3-margin').innerText = '$' + m3.toFixed(2) + ' (25%)';
+            document.getElementById('o3-tp').innerText = '∞ Unlimited Upside (Trailing)';
+            document.getElementById('o3-sl').innerText = 'Daily EMA20 / 4H ATR Chandelier';
 
-        // Summary Bar
-        document.getElementById('sum-avg-entry').innerText = '$' + formatNum(avgEntry);
-        document.getElementById('sum-be').innerText = '$' + formatNum(beTrigger);
-        document.getElementById('sum-sl-risk').innerText = '-$' + maxLoss.toFixed(2) + ' (' + ((maxLoss / budget) * 100).toFixed(1) + '%)';
+            // Summary Bar
+            document.getElementById('sum-avg-entry').innerText = '$' + formatNum(pEntry);
+            document.getElementById('sum-be').innerText = '$' + formatNum(beTrigger) + ' (+4.5% → Move SL to $0)';
+            document.getElementById('sum-sl-risk').innerText = '-$' + maxLoss.toFixed(2) + ' (' + ((maxLoss / budget) * 100).toFixed(1) + '%)';
 
-        // Full Bybit instruction text
-        const tagLine = isExpanded ? 'Expanded Defensive Buffer (Weekend / Macro)' : 'Standard Institutional Accumulation Ladder';
-        const txt = `🎯 BYBIT SMART MONEY GRID EXECUTION ORDER FOR ${symbol}\n` +
-            `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-            `📊 Trade Setup: ${leverage}x Isolated Leverage | Margin: $${budget} USDT\n` +
-            `🏷️ Execution Model: ${tagLine}\n` +
-            `💵 Reference Market Price: $${formatNum(price)}\n\n` +
-            `📍 ORDER #1 (${isExpanded ? '4H OB Deep -6.0%' : '4H OB Accumulation -3.5%'}):\n` +
-            `  • Type: Buy Limit Order\n` +
-            `  • Limit Price: $${formatNum(p1)}\n` +
-            `  • Size: ${formatTokenQty(q1)} ${token} (Margin ~$${m1.toFixed(2)} USDT)\n` +
-            `  • Take Profit 1 (+20%): $${formatNum(tp1)}\n` +
-            `  • Stop Loss: $${formatNum(sl)}\n\n` +
-            `⏳ ORDER #2 (${isExpanded ? '4H FVG Deep -11.2%' : '4H FVG Liquidity Sweep -7.0%'}):\n` +
-            `  • Type: Buy Limit Order\n` +
-            `  • Limit Price: $${formatNum(p2)}\n` +
-            `  • Size: ${formatTokenQty(q2)} ${token} (Margin ~$${m2.toFixed(2)} USDT)\n` +
-            `  • Take Profit 2 (+30%): $${formatNum(tp2)}\n` +
-            `  • Stop Loss: $${formatNum(sl)}\n\n` +
-            `🛡️ ORDER #3 (${isExpanded ? '1D Flush Support -16.5%' : '1D Major Support -11.2%'}):\n` +
-            `  • Type: Buy Limit Order\n` +
-            `  • Limit Price: $${formatNum(p3)}\n` +
-            `  • Size: ${formatTokenQty(q3)} ${token} (Margin ~$${m3.toFixed(2)} USDT)\n` +
-            `  • Take Profit 3 (+40%): $${formatNum(tp3)}\n` +
-            `  • Stop Loss: $${formatNum(sl)}\n\n` +
-            `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
-            `📐 Weighted Average Entry (if all 3 fill): $${formatNum(avgEntry)}\n` +
-            `⚡️ Move to Breakeven: when price reaches $${formatNum(beTrigger)} (+10% from entry), shift Stop Loss to $${formatNum(avgEntry)}\n` +
-            `🛡️ Deposit Protection: Liquidation risk 0% under 3x isolated margin and strict SL.\n\n` +
-            `✍️ Author: @ToP_TradingV`;
+            // Instructions Text
+            const entryTypeStr = isRetest ? '4H Order Block Retest Limit (-1.5%)' : 'Current Market Execution';
+            const txt = `🎯 SNIPER 3X + CASCADING RUNNER INSTRUCTIONS FOR ${symbol}\n` +
+                `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                `📊 Architecture: Sniper 3x Isolated + Cascading 50/25/25 Protocol\n` +
+                `💼 Sizing: $${budget} USDT (${leverage}x Isolated Leverage) | Position Size: ${formatTokenQty(totalTokens)} ${token}\n` +
+                `💵 Entry Trigger: $${formatNum(pEntry)} (${entryTypeStr})\n` +
+                `🛑 System Stop-Loss (-3.8%): $${formatNum(sl)} (Defined Risk: -$${maxLoss.toFixed(2)} USDT)\n\n` +
+                `📍 TAKE-PROFIT #1 (50% Size = ${formatTokenQty(q1)} ${token}):\n` +
+                `  • Target (+11.4% / R:R 1:3): $${formatNum(tp1)}\n` +
+                `  • Projected Gain: +$${estProfit1.toFixed(2)} USDT (+${(11.4 * leverage).toFixed(1)}% ROE)\n` +
+                `  • ⚡ Quantum Spot Ratchet: 50% profit (+$${spotRatchetVal.toFixed(2)} USDT) transferred to Spot Vault!\n` +
+                `  • Stop-Loss immediately shifted to Breakeven ($${formatNum(pEntry)}) — zero remaining downside risk!\n\n` +
+                `🚀 TAKE-PROFIT #2 (25% Size = ${formatTokenQty(q2)} ${token}):\n` +
+                `  • Target (+22.0% / R:R 1:6): $${formatNum(tp2)}\n` +
+                `  • Projected Gain: +$${estProfit2.toFixed(2)} USDT (+${(22.0 * leverage).toFixed(1)}% ROE)\n` +
+                `  • Trailing Stop trails above TP1 level, guaranteeing permanent net profit!\n\n` +
+                `💎 SUPER-RUNNER (25% Size = ${formatTokenQty(q3)} ${token}):\n` +
+                `  • No Fixed Take-Profit (Infinite Upside for parabolic trend legs)\n` +
+                `  • Exit Protocol: Dynamic 4H Chandelier ATR / Daily EMA20 Trailing Stop\n` +
+                `  • Objective: Capture macro altseason expansions (+50% .. +200% without early capping)\n\n` +
+                `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                `🛡️ Liquidation Immunity: 3x Isolated liquidation is at -33.3%; system SL is -3.8% (Liquidation Risk = 0.00%).\n\n` +
+                `✍️ Author: @ToP_TradingV`;
 
-        document.getElementById('order-instructions').value = txt;
+            document.getElementById('order-instructions').value = txt;
+
+        } else {
+            // ==================== SMART MONEY DCA GRID (3 ORDERS) ====================
+            const isExpanded = (preset === 'expanded');
+
+            const m1 = Math.round(budget * 0.333 * 100) / 100;
+            const m2 = Math.round(budget * 0.333 * 100) / 100;
+            const m3 = Math.round((budget - m1 - m2) * 100) / 100;
+
+            const p1 = isExpanded ? (price * 0.940) : (price * 0.965);
+            const p2 = isExpanded ? (p1 * 0.945) : (p1 * 0.964);
+            const p3 = isExpanded ? (p2 * 0.940) : (p2 * 0.955);
+            const sl = isExpanded ? (p3 * 0.910) : (p3 * 0.940);
+
+            const tp1 = p1 * 1.120;
+            const tp2 = p2 * 1.200;
+            const tp3 = p1 * 1.300;
+
+            const q1 = (m1 * leverage) / p1;
+            const q2 = (m2 * leverage) / p2;
+            const q3 = (m3 * leverage) / p3;
+            const totalQty = q1 + q2 + q3;
+
+            const totalCost = (p1 * q1) + (p2 * q2) + (p3 * q3);
+            const avgEntry = totalCost / totalQty;
+            const beTrigger = avgEntry * 1.06;
+
+            const maxLoss = ((avgEntry - sl) * totalQty);
+
+            document.getElementById('o1-tag').innerText = isExpanded ? '📍 ORDER #1 • 4H OB Deep (-6.0%)' : '📍 ORDER #1 • 4H OB (-3.5%)';
+            document.getElementById('o1-price').innerText = '$' + formatNum(p1);
+            document.getElementById('o1-qty').innerText = formatTokenQty(q1) + ' ' + token;
+            document.getElementById('o1-margin').innerText = '$' + m1.toFixed(2) + ' (33.3%)';
+            document.getElementById('o1-tp').innerText = '$' + formatNum(tp1) + ' (+12%)';
+            document.getElementById('o1-sl').innerText = '$' + formatNum(sl);
+
+            document.getElementById('o2-tag').innerText = isExpanded ? '⏳ ORDER #2 • 4H FVG Deep (-11.2%)' : '⏳ ORDER #2 • 4H FVG (-7.0%)';
+            document.getElementById('o2-price').innerText = '$' + formatNum(p2);
+            document.getElementById('o2-qty').innerText = formatTokenQty(q2) + ' ' + token;
+            document.getElementById('o2-margin').innerText = '$' + m2.toFixed(2) + ' (33.3%)';
+            document.getElementById('o2-tp').innerText = '$' + formatNum(tp2) + ' (+20%)';
+            document.getElementById('o2-sl').innerText = '$' + formatNum(sl);
+
+            document.getElementById('o3-tag').innerText = isExpanded ? '🛡️ ORDER #3 • 1D Flush Support (-16.5%)' : '🛡️ ORDER #3 • 1D Major Support (-11.2%)';
+            document.getElementById('o3-price').innerText = '$' + formatNum(p3);
+            document.getElementById('o3-qty').innerText = formatTokenQty(q3) + ' ' + token;
+            document.getElementById('o3-margin').innerText = '$' + m3.toFixed(2) + ' (33.4%)';
+            document.getElementById('o3-tp').innerText = '$' + formatNum(tp3) + ' (+30%)';
+            document.getElementById('o3-sl').innerText = '$' + formatNum(sl);
+
+            document.getElementById('sum-avg-entry').innerText = '$' + formatNum(avgEntry);
+            document.getElementById('sum-be').innerText = '$' + formatNum(beTrigger) + ' (+6% → Entry)';
+            document.getElementById('sum-sl-risk').innerText = '-$' + maxLoss.toFixed(2) + ' (' + ((maxLoss / budget) * 100).toFixed(1) + '%)';
+
+            const tagLine = isExpanded ? 'Expanded Defensive Buffer (Weekend / Macro)' : 'Standard Institutional Accumulation Ladder';
+            const txt = `🎯 BYBIT SMART MONEY GRID EXECUTION ORDER FOR ${symbol}\n` +
+                `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                `📊 Trade Setup: ${leverage}x Isolated Leverage | Margin: $${budget} USDT\n` +
+                `🏷️ Execution Model: ${tagLine}\n` +
+                `💵 Reference Market Price: $${formatNum(price)}\n\n` +
+                `📍 ORDER #1 (${isExpanded ? '4H OB Deep -6.0%' : '4H OB Accumulation -3.5%'}):\n` +
+                `  • Type: Buy Limit Order\n` +
+                `  • Limit Price: $${formatNum(p1)}\n` +
+                `  • Size: ${formatTokenQty(q1)} ${token} (Margin ~$${m1.toFixed(2)} USDT)\n` +
+                `  • Take Profit 1 (+12%): $${formatNum(tp1)}\n` +
+                `  • Stop Loss: $${formatNum(sl)}\n\n` +
+                `⏳ ORDER #2 (${isExpanded ? '4H FVG Deep -11.2%' : '4H FVG Liquidity Sweep -7.0%'}):\n` +
+                `  • Type: Buy Limit Order\n` +
+                `  • Limit Price: $${formatNum(p2)}\n` +
+                `  • Size: ${formatTokenQty(q2)} ${token} (Margin ~$${m2.toFixed(2)} USDT)\n` +
+                `  • Take Profit 2 (+20%): $${formatNum(tp2)}\n` +
+                `  • Stop Loss: $${formatNum(sl)}\n\n` +
+                `🛡️ ORDER #3 (${isExpanded ? '1D Flush Support -16.5%' : '1D Major Support -11.2%'}):\n` +
+                `  • Type: Buy Limit Order\n` +
+                `  • Limit Price: $${formatNum(p3)}\n` +
+                `  • Size: ${formatTokenQty(q3)} ${token} (Margin ~$${m3.toFixed(2)} USDT)\n` +
+                `  • Take Profit 3 (+30%): $${formatNum(tp3)}\n` +
+                `  • Stop Loss: $${formatNum(sl)}\n\n` +
+                `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                `📐 Weighted Average Entry (if all 3 fill): $${formatNum(avgEntry)}\n` +
+                `⚡️ Move to Breakeven: when price reaches $${formatNum(beTrigger)} (+6% from entry), shift Stop Loss to $${formatNum(avgEntry)}\n` +
+                `🛡️ Deposit Protection: Liquidation risk 0% under 3x isolated margin and strict SL.\n\n` +
+                `✍️ Author: @ToP_TradingV`;
+
+            document.getElementById('order-instructions').value = txt;
+        }
     }
 
     function copyInstructions() {
         const el = document.getElementById('order-instructions');
+        if (!el) return;
         el.select();
-        document.execCommand('copy');
-        alert('✅ Bybit instruction copied to clipboard!');
+        try {
+            navigator.clipboard.writeText(el.value).then(() => {
+                showToast('Bybit instructions copied to clipboard!');
+            }).catch(() => {
+                document.execCommand('copy');
+                showToast('Bybit instructions copied to clipboard!');
+            });
+        } catch(e) {
+            document.execCommand('copy');
+            showToast('Bybit instructions copied to clipboard!');
+        }
     }
 
     // Event listeners
@@ -1243,6 +1553,17 @@
             el.addEventListener('change', recalc);
         }
     });
+
+    const budgetInputEl = document.getElementById('budget-input');
+    if (budgetInputEl) {
+        budgetInputEl.addEventListener('input', () => {
+            const val = parseInt(budgetInputEl.value, 10);
+            document.querySelectorAll('.budget-chip').forEach(el => {
+                const text = el.innerText.replace('$', '').replace(',', '').replace('k', '000').replace('.5000', '500');
+                el.classList.toggle('active', parseInt(text, 10) === val);
+            });
+        });
+    }
 
     const priceInputEl = document.getElementById('price-input');
     if (priceInputEl) {
