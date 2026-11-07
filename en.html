@@ -1105,9 +1105,15 @@
                 <button class="btn btn-primary" onclick="copyInstructions()">
                     📋 Copy Ready Bybit Instructions
                 </button>
-                <a id="btn-bybit-terminal" href="https://www.bybit.com/trade/usdt/BTCUSDT" target="_blank" class="btn btn-bybit">
+                <a id="btn-bybit-terminal" href="https://www.bybit.com/trade/usdt/BTCUSDT" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" class="btn btn-bybit">
                     ⚡ Open Bybit Terminal (BTCUSDT) ➔
                 </a>
+                <button type="button" class="btn btn-secondary" onclick="copySymbol()" title="Copy ticker to clipboard">
+                    📑 Copy Ticker (<span id="btn-sym-name">BTCUSDT</span>)
+                </button>
+            </div>
+            <div style="font-size: 0.73rem; color: var(--text-muted); margin-top: 0.75rem; font-family: var(--font-mono); line-height: 1.45;">
+                ℹ️ <i>If link returns Akamai "Access Denied" (Bybit WAF perimeter block): disable VPN/proxy or copy the ticker above into your Bybit app. Official alternative exchange mirror: <a id="btn-bytick-terminal" href="https://www.bytick.com/trade/usdt/BTCUSDT" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" style="color: var(--accent-cyan); text-decoration: underline;">bytick.com (Bybit Mirror)</a></i>
             </div>
         </div>
     </section>
@@ -1328,6 +1334,28 @@
         if (btn) {
             btn.href = `https://www.bybit.com/trade/usdt/${cleanSym}`;
             btn.innerText = `⚡ Open Bybit Terminal (${cleanSym}) ➔`;
+        }
+        const btnMirror = document.getElementById('btn-bytick-terminal');
+        if (btnMirror) {
+            btnMirror.href = `https://www.bytick.com/trade/usdt/${cleanSym}`;
+            btnMirror.innerText = `bytick.com (${cleanSym})`;
+        }
+        const symName = document.getElementById('btn-sym-name');
+        if (symName) {
+            symName.innerText = cleanSym;
+        }
+    }
+
+    function copySymbol() {
+        const symbol = (document.getElementById('symbol-input').value || 'BTCUSDT').toUpperCase().trim();
+        try {
+            navigator.clipboard.writeText(symbol).then(() => {
+                showToast(`Ticker ${symbol} copied to clipboard!`);
+            }).catch(() => {
+                showToast(`Ticker ${symbol} copied!`);
+            });
+        } catch(e) {
+            showToast(`Ticker ${symbol} copied!`);
         }
     }
 

@@ -1082,9 +1082,15 @@
                 <button class="btn btn-primary" onclick="copyInstructions()">
                     📋 Скопировать готовую инструкцию для Bybit
                 </button>
-                <a id="btn-bybit-terminal" href="https://www.bybit.com/trade/usdt/BTCUSDT" target="_blank" class="btn btn-bybit">
+                <a id="btn-bybit-terminal" href="https://www.bybit.com/trade/usdt/BTCUSDT" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" class="btn btn-bybit">
                     ⚡ Открыть терминал Bybit (BTCUSDT) ➔
                 </a>
+                <button type="button" class="btn btn-secondary" onclick="copySymbol()" title="Скопировать тикер в буфер">
+                    📑 Скопировать тикер (<span id="btn-sym-name">BTCUSDT</span>)
+                </button>
+            </div>
+            <div style="font-size: 0.73rem; color: var(--text-muted); margin-top: 0.75rem; font-family: var(--font-mono); line-height: 1.45;">
+                ℹ️ <i>Если при переходе возникает ошибка «Access Denied» (защитный фаервол Akamai/Bybit): отключите VPN либо скопируйте тикер кнопкой выше и найдите его в приложении Bybit. Альтернативное рабочее зеркало биржи: <a id="btn-bytick-terminal" href="https://www.bytick.com/trade/usdt/BTCUSDT" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" style="color: var(--accent-cyan); text-decoration: underline;">bytick.com (Bybit Mirror)</a></i>
             </div>
         </div>
     </section>
@@ -1305,6 +1311,28 @@
         if (btn) {
             btn.href = `https://www.bybit.com/trade/usdt/${cleanSym}`;
             btn.innerText = `⚡ Открыть терминал Bybit (${cleanSym}) ➔`;
+        }
+        const btnMirror = document.getElementById('btn-bytick-terminal');
+        if (btnMirror) {
+            btnMirror.href = `https://www.bytick.com/trade/usdt/${cleanSym}`;
+            btnMirror.innerText = `bytick.com (${cleanSym})`;
+        }
+        const symName = document.getElementById('btn-sym-name');
+        if (symName) {
+            symName.innerText = cleanSym;
+        }
+    }
+
+    function copySymbol() {
+        const symbol = (document.getElementById('symbol-input').value || 'BTCUSDT').toUpperCase().trim();
+        try {
+            navigator.clipboard.writeText(symbol).then(() => {
+                showToast(`Тикер ${symbol} скопирован в буфер обмена!`);
+            }).catch(() => {
+                showToast(`Тикер ${symbol} скопирован!`);
+            });
+        } catch(e) {
+            showToast(`Тикер ${symbol} скопирован!`);
         }
     }
 
